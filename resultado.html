@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O seu resultado | GRUPO G4 REMAX</title>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       VERIFICAÇÃO sessionStorage — redirect antes de renderizar
+       qualquer conteúdo se não houver dados (abre diretamente)
+       ═══════════════════════════════════════════════════════════ -->
+  <script>
+    var dadosSim = null;
+    (function() {
+      try {
+        var raw = sessionStorage.getItem('sim_g4remax');
+        if (!raw) { window.location.replace('index.html'); return; }
+        dadosSim = JSON.parse(raw);
+        if (!dadosSim || !dadosSim.A) { window.location.replace('index.html'); }
+      } catch(e) {
+        window.location.replace('index.html');
+      }
+    })();
+    // Nota: window.location.replace cancela qualquer beacon pendente —
+    // por isso o Lead NÃO é disparado aqui (já foi no index.html).
+    // O PageView abaixo só executa se dadosSim existir.
+  </script>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       META PIXEL — APENAS PageView (Lead já foi disparado no index)
+       O PageView deste URL /resultado alimenta a CONVERSÃO PERSONALIZADA POR URL
+       ═══════════════════════════════════════════════════════════ -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'SEU_PIXEL_ID_AQUI');
+    fbq('track', 'PageView'); /* ← NÃO disparar Lead aqui — evita duplicação */
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=SEU_PIXEL_ID_AQUI&ev=PageView&noscript=1"
+      alt="" aria-hidden="true">
+  </noscript>
+  <!-- FIM META PIXEL -->
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── RESET & TOKENS ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary:      #004e9c;
+      --primary-dark: #003d7a;
+      --primary-light:#e8f0fa;
+      --accent:       #9a9c9e;
+      --bg:           #ffffff;
+      --surface:      #f4f7fb;
+      --text-dark:    #202020;
+      --text-mid:     #4a4a4a;
+      --text-light:   #6b6b6b;
+      --border:       #dde3ec;
+      --green:        #1b6b3a;
+      --green-bg:     #e6f4ec;
+      --amber:        #b45309;
+      --amber-bg:     #fef3c7;
+      --radius:       14px;
+      --radius-sm:    9px;
+    }
+
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+    body  { font-family: 'Inter', sans-serif; background: var(--surface); color: var(--text-dark); min-height: 100vh; }
+
+    /* ── UTILIDADES ── */
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+    /* ══════════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════════ */
+    .r-header {
+      background: var(--primary);
+      padding: 0.875rem 1.25rem;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .r-header-brand {
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .r-header-mark {
+      width: 28px; height: 28px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 0.7rem; font-weight: 700; color: #fff;
+    }
+    .r-header-name {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: rgba(255,255,255,0.8);
+    }
+    .r-header-tag {
+      font-size: 0.68rem; font-weight: 600;
+      color: rgba(255,255,255,0.65);
+      letter-spacing: 0.06em;
+      white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════════
+       HERO DO RESULTADO
+    ══════════════════════════════════════════ */
+    .r-hero {
+      background: linear-gradient(150deg, #002f5f 0%, #004e9c 60%, #1565c0 100%);
+      padding: 2.5rem 1.25rem 3.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .r-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+    .r-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30px; left: -5%;
+      width: 110%; height: 60px;
+      background: var(--surface);
+      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    }
+    .r-hero-inner { position: relative; z-index: 2; }
+
+    .r-greeting {
+      font-size: 0.88rem; font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.02em;
+    }
+
+    .r-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 1.75rem;
+    }
+
+    /* Score display */
+    .score-box {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 16px;
+      padding: 1.2rem 2rem 1.4rem;
+      backdrop-filter: blur(6px);
+      margin-bottom: 1.4rem;
+    }
+
+    .score-label {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.5rem;
+    }
+
+    .score-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.6rem; font-weight: 700;
+      color: #fff; line-height: 1;
+    }
+    .score-denom {
+      font-size: 1.2rem; font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      margin-left: 0.2rem;
+    }
+
+    /* Badge */
+    .score-badge {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 800;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      padding: 0.3rem 0.85rem;
+      border-radius: 2rem;
+      margin-top: 0.65rem;
+    }
+    .badge-excelente { background: var(--green-bg); color: var(--green); }
+    .badge-bom       { background: var(--primary-light); color: var(--primary); }
+    .badge-moderado  { background: var(--amber-bg); color: var(--amber); }
+
+    /* Barra de score */
+    .score-bar-wrap {
+      width: min(340px, 90vw);
+      height: 8px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 4px;
+      margin: 1.25rem auto 0;
+      overflow: hidden;
+    }
+    .score-bar {
+      height: 100%;
+      border-radius: 4px;
+      width: 0%;
+      transition: none; /* gerido por JS requestAnimationFrame */
+    }
+    .bar-excelente { background: linear-gradient(90deg, #4caf50, #81c784); }
+    .bar-bom       { background: linear-gradient(90deg, #1565c0, #42a5f5); }
+    .bar-moderado  { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    /* ══════════════════════════════════════════
+       CORPO
+    ══════════════════════════════════════════ */
+    .r-body {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2.25rem 1.25rem 4rem;
+    }
+
+    .section-title {
+      font-size: 0.66rem; font-weight: 800;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      opacity: 0.75;
+    }
+
+    /* ── CARDS PRAZO / MOTIVO ── */
+    .cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+    @media (max-width: 380px) {
+      .cards-row { grid-template-columns: 1fr; }
+    }
+
+    .info-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1rem;
+      box-shadow: 0 1px 6px rgba(0,78,156,0.06);
+    }
+    .info-card-label {
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+    .info-card-value {
+      font-size: 0.95rem; font-weight: 600;
+      color: var(--text-dark); line-height: 1.3;
+    }
+
+    /* ── INTERPRETAÇÃO DO SCORE ── */
+    .interp-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 1.1rem 1.15rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 1px 6px rgba(0,78,156,0.06);
+    }
+    .interp-text {
+      font-size: 0.93rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+    }
+
+    /* ── CITAÇÃO DE REFORÇO ── */
+    .quote-block {
+      background: var(--primary);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.35rem;
+      margin-bottom: 1.75rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .quote-block::before {
+      content: '\201C';
+      position: absolute;
+      top: -0.5rem; left: 0.75rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 6rem; font-weight: 700;
+      color: rgba(255,255,255,0.1);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+    }
+    .quote-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: rgba(255,255,255,0.95);
+      line-height: 1.65;
+      position: relative;
+    }
+    .quote-author {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.85rem;
+      position: relative;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.75rem 0;
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-bottom: 0.5rem;
+    }
+    .tl-item {
+      display: flex;
+      gap: 1rem;
+      padding: 0 0 1.5rem 0;
+      position: relative;
+    }
+    .tl-item:not(:last-child) .tl-line { display: block; }
+    .tl-left { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+    .tl-dot {
+      width: 36px; height: 36px;
+      background: var(--primary-light);
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+    .tl-line {
+      display: none;
+      flex: 1;
+      width: 2px;
+      background: var(--border);
+      margin-top: 4px;
+    }
+    .tl-content { padding-top: 0.45rem; }
+    .tl-title {
+      font-size: 0.93rem; font-weight: 700;
+      color: var(--text-dark); margin-bottom: 0.2rem;
+    }
+    .tl-desc {
+      font-size: 0.83rem; color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* ── AVISOS ── */
+    .avisos {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .aviso {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      box-shadow: 0 1px 4px rgba(0,78,156,0.05);
+    }
+    .aviso-num {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      background: var(--primary);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 800;
+      color: #fff; margin-top: 1px;
+    }
+    .aviso-content {}
+    .aviso-title {
+      font-size: 0.88rem; font-weight: 700;
+      color: var(--text-dark); margin-bottom: 0.25rem;
+    }
+    .aviso-text {
+      font-size: 0.82rem; color: var(--text-light);
+      line-height: 1.6;
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+      box-shadow: 0 2px 12px rgba(0,78,156,0.08);
+    }
+    .cta-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--text-dark); margin-bottom: 0.4rem;
+    }
+    .cta-subtitle {
+      font-size: 0.86rem; color: var(--text-light);
+      margin-bottom: 1.4rem; line-height: 1.6;
+    }
+
+    .btn-wa {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
+      width: 100%;
+      padding: 1rem;
+      background: #25d366;
+      color: #fff;
+      border: none;
+      border-radius: 3rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem; font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: background 0.15s, transform 0.1s;
+      margin-bottom: 0.75rem;
+    }
+    .btn-wa:hover  { background: #1db954; }
+    .btn-wa:active { transform: scale(0.98); }
+
+    .cta-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+    }
+
+    .btn-call {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.85rem 0.75rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 3rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem; font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .btn-call:hover { background: var(--primary-dark); }
+
+    .btn-ig {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.85rem 0.75rem;
+      background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
+      color: #fff;
+      border: none;
+      border-radius: 3rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem; font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .btn-ig:hover { opacity: 0.88; }
+
+    /* ── FOOTER ── */
+    .r-footer {
+      text-align: center;
+      padding: 1.5rem 1.25rem 2.5rem;
+      font-size: 0.73rem;
+      color: var(--accent);
+      line-height: 1.7;
+    }
+    .r-footer a { color: var(--primary); text-decoration: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .score-bar { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="r-header">
+    <div class="r-header-brand">
+      <div class="r-header-mark" aria-hidden="true">G4</div>
+      <span class="r-header-name">Grupo G4 Remax</span>
+    </div>
+    <span class="r-header-tag">Resultado</span>
+  </header>
+
+  <!-- HERO DO RESULTADO -->
+  <section class="r-hero" aria-label="Resultado do simulador">
+    <div class="r-hero-inner">
+      <p class="r-greeting" id="r-greeting">O seu resultado personalizado</p>
+      <h1 class="r-title">Calculámos a viabilidade<br>da sua troca de casa.</h1>
+
+      <div class="score-box" aria-label="Pontuação de viabilidade">
+        <p class="score-label">Índice de viabilidade</p>
+        <div>
+          <span class="score-value" id="scoreValue">–</span><span class="score-denom">&nbsp;/ 10</span>
+        </div>
+        <span class="score-badge" id="scoreBadge">A calcular…</span>
+      </div>
+
+      <div class="score-bar-wrap" role="progressbar" aria-label="Barra de viabilidade" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10">
+        <div class="score-bar" id="scoreBar"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORPO -->
+  <main class="r-body">
+
+    <!-- Interpretação + Cards -->
+    <section aria-labelledby="sec-interp">
+      <p class="section-title" id="sec-interp">A sua situação</p>
+
+      <div class="interp-block">
+        <p class="interp-text" id="r-interp">A analisar…</p>
+      </div>
+
+      <div class="cards-row">
+        <div class="info-card">
+          <p class="info-card-label">Prazo indicado</p>
+          <p class="info-card-value" id="cardPrazo">–</p>
+        </div>
+        <div class="info-card">
+          <p class="info-card-label">Motivo principal</p>
+          <p class="info-card-value" id="cardMotivo">–</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Citação de reforço -->
+    <div class="quote-block" role="blockquote">
+      <p class="quote-text" id="r-quote">–</p>
+      <p class="quote-author">Equipa GRUPO G4 REMAX</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Timeline -->
+    <section aria-labelledby="sec-timeline">
+      <p class="section-title" id="sec-timeline">O processo de troca de casa</p>
+      <div class="timeline" role="list">
+
+        <div class="tl-item" role="listitem">
+          <div class="tl-left">
+            <div class="tl-dot" aria-hidden="true">01</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-content">
+            <p class="tl-title">Avaliação do imóvel atual</p>
+            <p class="tl-desc">Determinar o valor real de mercado do seu imóvel para definir a estratégia de preço e o timing ideal de venda.</p>
+          </div>
+        </div>
+
+        <div class="tl-item" role="listitem">
+          <div class="tl-left">
+            <div class="tl-dot" aria-hidden="true">02</div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-content">
+            <p class="tl-title">Definição da estratégia</p>
+            <p class="tl-desc">Vender primeiro vs. comprar primeiro — cada opção tem vantagens distintas consoante o seu prazo, perfil financeiro e exposição ao risco.</p>
+          </div>
+        </div>
+
+        <div class="tl-item" role="listitem">
+          <div class="tl-left">
+            <div class="tl-dot" aria-hidden="true">03</div>
+          </div>
+          <div class="tl-content">
+            <p class="tl-title">Escritura e mudança</p>
+            <p class="tl-desc">Coordenação das duas escrituras para uma transição fluída e sem periodos de sobreposição ou lacunas entre imóveis.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Avisos / O que deve considerar -->
+    <section aria-labelledby="sec-avisos">
+      <p class="section-title" id="sec-avisos">O que deve considerar antes de avançar</p>
+      <div class="avisos" role="list">
+
+        <div class="aviso" role="listitem">
+          <div class="aviso-num" aria-hidden="true">1</div>
+          <div class="aviso-content">
+            <p class="aviso-title">Conheça o valor real do seu imóvel</p>
+            <p class="aviso-text">Muitos proprietários subvalorizam ou sobrevalorizam o seu imóvel. Uma avaliação rigorosa por um profissional é o ponto de partida para qualquer negociação — e pode fazer a diferença de dezenas de milhares de euros.</p>
+          </div>
+        </div>
+
+        <div class="aviso" role="listitem">
+          <div class="aviso-num" aria-hidden="true">2</div>
+          <div class="aviso-content">
+            <p class="aviso-title">Calcule todos os encargos</p>
+            <p class="aviso-text">IMT, Imposto do Selo, emolumentos notariais, registos e comissões imobiliárias podem representar 5 a 8% do valor da transação. Saiba exatamente quanto vai gastar antes de fechar qualquer acordo.</p>
+          </div>
+        </div>
+
+        <div class="aviso" role="listitem" id="aviso-credito">
+          <div class="aviso-num" aria-hidden="true">3</div>
+          <div class="aviso-content">
+            <p class="aviso-title" id="aviso-credito-title">Crédito habitação</p>
+            <p class="aviso-text" id="aviso-credito-text">–</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- CTA -->
+    <section class="cta-section" aria-labelledby="cta-heading">
+      <h2 class="cta-title" id="cta-heading">O próximo passo é conversar</h2>
+      <p class="cta-subtitle">A nossa equipa analisa a sua situação específica e apresenta-lhe uma estratégia personalizada — sem compromisso.</p>
+
+      <a
+        class="btn-wa"
+        href="https://wa.me/351914016372?text=Ol%C3%A1%2C%20fiz%20o%20simulador%20e%20queria%20falar%20sobre%20a%20minha%20situa%C3%A7%C3%A3o"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Falar com G4 REMAX no WhatsApp">
+        <!-- WhatsApp icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        Falar no WhatsApp
+      </a>
+
+      <div class="cta-row">
+        <a
+          class="btn-call"
+          href="tel:+351914016372"
+          aria-label="Ligar agora para G4 REMAX">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+          Ligar agora
+        </a>
+        <a
+          class="btn-ig"
+          href="https://www.instagram.com/grupog4_remax/"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram do Grupo G4 REMAX">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+          </svg>
+          Instagram
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="r-footer">
+    <p>GRUPO G4 REMAX · <a href="tel:+351914016372">+351 914 016 372</a></p>
+    <p style="margin-top:0.35rem;">Os seus dados são tratados com confidencialidade ao abrigo do RGPD.</p>
+  </footer>
+
+  <!-- ══════════════════════════════════════════
+       JAVASCRIPT — Preenche o resultado
+  ══════════════════════════════════════════ -->
+  <script>
+    // dadosSim foi lido no <head>. Se for null, já houve redirect — não continuar.
+    if (dadosSim && dadosSim.A) {
+      (function() {
+        var A     = dadosSim.A;
+        var score = typeof dadosSim.score === 'number' ? dadosSim.score : 5;
+
+        // ── Saudação com o primeiro nome ──
+        var partes = (A.nome || '').trim().split(/\s+/);
+        var first  = partes[0] || '';
+        if (first) {
+          document.getElementById('r-greeting').textContent = 'Olá, ' + first + '! Aqui está o seu resultado.';
+        }
+
+        // ── Score ──
+        var scoreEl = document.getElementById('scoreValue');
+        scoreEl.textContent = score.toFixed(1).replace('.', ',');
+
+        // ── Badge ──
+        var badge = document.getElementById('scoreBadge');
+        var barEl = document.getElementById('scoreBar');
+
+        if (score >= 8) {
+          badge.textContent = 'Excelente';
+          badge.className   = 'score-badge badge-excelente';
+          barEl.className   = 'score-bar bar-excelente';
+        } else if (score >= 6) {
+          badge.textContent = 'Bom';
+          badge.className   = 'score-badge badge-bom';
+          barEl.className   = 'score-bar bar-bom';
+        } else {
+          badge.textContent = 'Moderado';
+          badge.className   = 'score-badge badge-moderado';
+          barEl.className   = 'score-bar bar-moderado';
+        }
+
+        // Atualiza aria
+        document.querySelector('.score-bar-wrap').setAttribute('aria-valuenow', score);
+
+        // ── Animar barra de score ──
+        var targetPct = (score / 10) * 100;
+        var startTs   = null;
+        function animarBarra(ts) {
+          if (!startTs) startTs = ts;
+          var progresso = Math.min((ts - startTs) / 1100, 1);
+          var ease      = 1 - Math.pow(1 - progresso, 3); // cubic ease-out
+          barEl.style.width = (ease * targetPct).toFixed(2) + '%';
+          if (progresso < 1) requestAnimationFrame(animarBarra);
+        }
+        // Pequeno delay para garantir que o DOM já renderizou
+        setTimeout(function() { requestAnimationFrame(animarBarra); }, 150);
+
+        // ── Cards ──
+        var lblPrazo = {
+          'O mais rápido possível': 'O mais rápido possível',
+          '<3 meses':  'Menos de 3 meses',
+          '3–6 meses': '3 a 6 meses',
+          '>6 meses':  'Mais de 6 meses'
+        };
+        var lblMotivo = {
+          'Família/espaço':          'Família / espaço',
+          'Mudança de zona':         'Mudança de zona',
+          'Upgrade qualidade de vida':'Upgrade de qualidade de vida',
+          'Razões financeiras':      'Razões financeiras',
+          'Outro':                   'Outro motivo'
+        };
+        document.getElementById('cardPrazo').textContent  = lblPrazo[A.prazo]   || A.prazo   || '–';
+        document.getElementById('cardMotivo').textContent = lblMotivo[A.motivo]  || A.motivo  || '–';
+
+        // ── Interpretação do score ──
+        var interp;
+        if (score >= 8) {
+          interp = 'A sua situação financeira está bem posicionada para avançar. Com capitais próprios sólidos e uma trajetória de prazo realista, a troca de casa pode ser mais simples e menos arriscada do que imagina — desde que a estratégia seja bem definida desde o início.';
+        } else if (score >= 6) {
+          interp = 'A sua situação tem potencial real. Existem pontos de atenção que merecem ser analisados em detalhe, mas com o planeamento adequado e o apoio de especialistas, a troca de casa está ao alcance. A estratégia certa faz toda a diferença.';
+        } else {
+          interp = 'Existem alguns condicionantes a considerar antes de avançar — mas isso não significa que seja impossível. Significa que precisa de uma estratégia personalizada que minimize o risco e maximize as suas hipóteses de concretizar a troca em boas condições.';
+        }
+        document.getElementById('r-interp').textContent = interp;
+
+        // ── Citação de reforço ──
+        var quote;
+        if (score >= 8) {
+          quote = 'Com a preparação certa, a troca de casa não é uma transação — é uma oportunidade. A sua pontuação indica que as condições estão reunidas para avançar com confiança.';
+        } else if (score >= 6) {
+          quote = 'A maioria das trocas de casa bem-sucedidas não acontecem por acaso. Acontecem porque alguém decidiu planear antes de agir — e a sua situação está a um passo disso.';
+        } else {
+          quote = 'Cada situação é única, e o que parece um obstáculo pode ser uma vantagem negocial quando olhado pela perspetiva certa. O primeiro passo é perceber com clareza onde está e para onde pode ir.';
+        }
+        document.getElementById('r-quote').textContent = quote;
+
+        // ── Aviso 3 — Crédito habitação (adapta-se ao perfil) ──
+        var avisoTit, avisoTxt;
+        if (A.tem_credito === 'Sim') {
+          avisoTit = 'Crédito habitação ativo — atenção à estratégia';
+          avisoTxt = 'Com crédito habitação em curso, existem duas abordagens principais: a portabilidade do crédito para o novo imóvel (quando os termos são favoráveis) ou a liquidação do crédito com a venda e nova contratação. Em muitos casos, vender antes de comprar reduz o risco de duplo encargo. Consulte um intermediário de crédito para analisar as suas condições atuais.';
+        } else {
+          avisoTit = 'Imóvel livre de hipoteca — uma vantagem estratégica';
+          avisoTxt = 'Não ter crédito habitação ativo dá-lhe uma flexibilidade significativa: pode comprar antes de vender sem risco de duplo crédito, tem mais poder negocial com os vendedores e acesso a condições de financiamento mais competitivas para o novo imóvel.';
+        }
+        document.getElementById('aviso-credito-title').textContent = avisoTit;
+        document.getElementById('aviso-credito-text').textContent  = avisoTxt;
+
+      })();
+    }
+  </script>
+
+</body>
+</html>
