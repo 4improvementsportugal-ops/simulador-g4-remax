@@ -196,11 +196,16 @@
     /* Header — logo à esquerda, passo à direita */
     .quiz-header {
       background: var(--primary);
+      padding: 0;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .quiz-header-inner {
+      max-width: 850px;
+      margin: 0 auto;
       padding: 0.9rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky; top: 0; z-index: 50;
     }
     .quiz-header-brand {
       display: flex; align-items: center; gap: 0.5rem;
@@ -509,11 +514,13 @@
   <div class="quiz-container" id="quizContainer" aria-label="Simulador de troca de casa">
 
     <header class="quiz-header">
-      <div class="quiz-header-brand">
-        <div class="quiz-header-mark" aria-hidden="true">G4</div>
-        <span class="quiz-header-name">Grupo G4 Remax</span>
+      <div class="quiz-header-inner">
+        <div class="quiz-header-brand">
+          <div class="quiz-header-mark" aria-hidden="true">G4</div>
+          <span class="quiz-header-name">Grupo G4 Remax</span>
+        </div>
+        <span class="quiz-step-indicator" id="stepLabel" aria-live="polite" aria-atomic="true">Passo 1 de 5</span>
       </div>
-      <span class="quiz-step-indicator" id="stepLabel" aria-live="polite" aria-atomic="true">Passo 1 de 5</span>
     </header>
 
     <div class="quiz-body">
