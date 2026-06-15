@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Descubra em menos de 3 minutos se a troca de casa é viável para si. Simulador gratuito do GRUPO G4 REMAX.">
   <title>Simulador de Troca de Casa | GRUPO G4 REMAX</title>
-
+ 
   <!-- ═══════════════════════════════════════════
        META PIXEL — substitui SEU_PIXEL_ID_AQUI
        ═══════════════════════════════════════════ -->
@@ -24,16 +24,16 @@
       alt="" aria-hidden="true">
   </noscript>
   <!-- FIM META PIXEL -->
-
+ 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+ 
   <style>
     /* ── RESET & CUSTOM PROPERTIES ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
     :root {
       --primary:      #004e9c;
       --primary-dark: #003d7a;
@@ -51,10 +51,10 @@
       --radius:       12px;
       --radius-sm:    8px;
     }
-
+ 
     html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
     body  { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-dark); min-height: 100vh; line-height: 1.6; }
-
+ 
     /* ══════════════════════════════════════════
        HERO
     ══════════════════════════════════════════ */
@@ -70,7 +70,7 @@
       overflow: hidden;
       text-align: center;
     }
-
+ 
     /* Subtle dot pattern */
     .hero::before {
       content: '';
@@ -80,7 +80,7 @@
       background-size: 28px 28px;
       pointer-events: none;
     }
-
+ 
     /* Decorative arc */
     .hero::after {
       content: '';
@@ -90,7 +90,7 @@
       background: var(--bg);
       border-radius: 50% 50% 0 0 / 100% 100% 0 0;
     }
-
+ 
     .hero-inner {
       position: relative;
       z-index: 2;
@@ -99,7 +99,7 @@
       flex-direction: column;
       align-items: center;
     }
-
+ 
     .hero-logotype {
       display: flex;
       align-items: center;
@@ -124,7 +124,7 @@
       text-transform: uppercase;
       color: rgba(255,255,255,0.85);
     }
-
+ 
     .hero-chip {
       background: rgba(255,255,255,0.14);
       border: 1px solid rgba(255,255,255,0.28);
@@ -136,7 +136,7 @@
       border-radius: 2rem;
       margin-bottom: 1.6rem;
     }
-
+ 
     .hero-title {
       font-family: 'Playfair Display', serif;
       font-size: clamp(1.85rem, 5.5vw, 3.1rem);
@@ -149,7 +149,7 @@
       font-style: italic;
       color: rgba(255,255,255,0.78);
     }
-
+ 
     .hero-subtitle {
       font-size: clamp(0.95rem, 2.4vw, 1.1rem);
       color: rgba(255,255,255,0.75);
@@ -157,7 +157,7 @@
       max-width: 540px;
       margin-bottom: 2.4rem;
     }
-
+ 
     .hero-cta {
       background: #ffffff;
       color: var(--primary);
@@ -173,7 +173,7 @@
     }
     .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,0.28); }
     .hero-cta:active { transform: translateY(0px); }
-
+ 
     .hero-seals {
       display: flex;
       flex-wrap: wrap;
@@ -187,37 +187,40 @@
       color: rgba(255,255,255,0.58);
     }
     .hero-seal svg { flex-shrink: 0; }
-
+ 
     /* ══════════════════════════════════════════
        QUIZ CONTAINER
     ══════════════════════════════════════════ */
     .quiz-container { display: none; min-height: 100vh; background: var(--surface); }
-
+ 
     /* Header — logo à esquerda, passo à direita */
     .quiz-header {
       background: var(--primary);
+      padding: 0;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .quiz-header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 0.9rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      position: sticky; top: 0; z-index: 50;
     }
     .quiz-header-brand {
       display: flex; align-items: center; gap: 0.5rem;
     }
     .quiz-header-mark {
-      width: 26px; height: 26px;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 0.68rem; font-weight: 700; color: #fff;
+      display: none; /* substituído pela imagem */
     }
     .quiz-header-name {
-      font-size: 0.66rem; font-weight: 600;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: rgba(255,255,255,0.8);
+      display: none; /* substituído pela imagem */
+    }
+    .quiz-header-logo {
+      height: 30px;
+      width: auto;
+      display: block;
+      filter: brightness(0) invert(1);
     }
     .quiz-step-indicator {
       font-size: 0.7rem; font-weight: 500;
@@ -225,7 +228,7 @@
       letter-spacing: 0.06em;
       white-space: nowrap;
     }
-
+ 
     /* Barra de progresso — acima do card branco, mesma largura */
     .quiz-prog-bar {
       height: 5px;
@@ -240,14 +243,14 @@
       border-radius: 3px;
       transition: width 0.45s cubic-bezier(.4,0,.2,1);
     }
-
+ 
     /* Body — área de fundo cinzento, centrada */
     .quiz-body {
       max-width: 600px;
       margin: 0 auto;
       padding: 1.5rem 1.25rem 2.5rem;
     }
-
+ 
     /* Card branco centralizado que contém os passos */
     .quiz-card {
       background: #ffffff;
@@ -258,14 +261,14 @@
       padding: 1.85rem 1.65rem 1.5rem;
       overflow: hidden;
     }
-
+ 
     @media (max-width: 520px) {
       .quiz-card {
         border-radius: 14px;
         padding: 1.4rem 1.2rem 1.25rem;
       }
     }
-
+ 
     /* Steps */
     .step { display: none; }
     .step.active { display: block; animation: fadeSlide 0.28s ease; }
@@ -273,7 +276,7 @@
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
+ 
     .step-eyebrow {
       font-size: 0.68rem; font-weight: 700;
       letter-spacing: 0.16em; text-transform: uppercase;
@@ -290,26 +293,26 @@
       font-size: 0.875rem; color: var(--text-light);
       margin-bottom: 1.75rem; line-height: 1.6;
     }
-
+ 
     /* Field groups */
     .field-group { margin-bottom: 1.4rem; }
-
+ 
     .field-label {
       display: block;
       font-size: 0.82rem; font-weight: 600;
       color: var(--text-dark); margin-bottom: 0.5rem;
     }
     .field-required::after { content: ' *'; color: var(--error); }
-
+ 
     /* Option grids */
     .opts { display: grid; gap: 0.5rem; }
     .opts-2 { grid-template-columns: 1fr 1fr; }
     .opts-4 { grid-template-columns: repeat(4, 1fr); }
-
+ 
     @media (max-width: 380px) {
       .opts-4 { grid-template-columns: 1fr 1fr; }
     }
-
+ 
     .opt {
       background: #f7f9fc;
       border: 2px solid var(--border);
@@ -330,7 +333,7 @@
       color: var(--primary); font-weight: 600;
     }
     .opt.err { border-color: var(--error) !important; }
-
+ 
     /* Text inputs */
     .finput {
       width: 100%;
@@ -345,7 +348,7 @@
     }
     .finput:focus { border-color: var(--primary); }
     .finput.err { border-color: var(--error); }
-
+ 
     /* Selects */
     .fselect {
       width: 100%;
@@ -364,7 +367,7 @@
     }
     .fselect:focus { border-color: var(--primary); }
     .fselect.err { border-color: var(--error); }
-
+ 
     /* Error messages */
     .errmsg {
       display: none;
@@ -372,17 +375,17 @@
       color: var(--error); margin-top: 0.4rem;
     }
     .errmsg.show { display: block; }
-
+ 
     /* Conditional fields */
     .cond { display: none; }
     .cond.on { display: block; }
-
+ 
     /* GDPR notice */
     .gdpr-note {
       font-size: 0.73rem; color: var(--accent);
       line-height: 1.55; margin-top: 0.75rem;
     }
-
+ 
     /* ── NAVIGATION (abaixo do card, no fluxo normal) ── */
     .quiz-nav {
       margin-top: 0.875rem;
@@ -404,7 +407,7 @@
       transition: border-color 0.15s, color 0.15s;
     }
     .btn-back:hover { border-color: var(--accent); color: var(--text-dark); }
-
+ 
     .btn-next {
       flex: 1;
       padding: 0.9rem 1.4rem;
@@ -419,7 +422,7 @@
     .btn-next:hover { background: var(--primary-dark); }
     .btn-next:active { transform: scale(0.98); }
     .btn-next:disabled { background: var(--accent); cursor: not-allowed; }
-
+ 
     /* ── SENDING OVERLAY ── */
     .overlay {
       display: none;
@@ -441,7 +444,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .overlay-text { font-size: 1rem; font-weight: 500; opacity: 0.88; }
-
+ 
     @media (prefers-reduced-motion: reduce) {
       .step.active { animation: none; }
       .spinner { animation: none; }
@@ -449,33 +452,33 @@
   </style>
 </head>
 <body>
-
+ 
   <!-- ══════════════════════════════════════════
        HERO
   ══════════════════════════════════════════ -->
   <section class="hero" id="hero" aria-label="Simulador de Troca de Casa G4 REMAX">
     <div class="hero-inner">
-
+ 
       <div class="hero-logotype" aria-label="GRUPO G4 REMAX">
         <div class="hero-logotype-mark" aria-hidden="true">G4</div>
         <span class="hero-logotype-name">Grupo G4 Remax</span>
       </div>
-
+ 
       <span class="hero-chip" role="note">Simulador Gratuito · Resultado Imediato</span>
-
+ 
       <h1 class="hero-title">
         A sua próxima casa já existe.<br>
         <em>Descubra se está pronto para avançar.</em>
       </h1>
-
+ 
       <p class="hero-subtitle">
         Responda a 5 perguntas e saiba, em menos de 3 minutos, se a troca de casa é viável para si — e qual o próximo passo concreto para a concretizar.
       </p>
-
+ 
       <button class="hero-cta" id="btnIniciar" onclick="iniciarQuiz()" aria-label="Iniciar simulação de troca de casa">
         Iniciar Simulação →
       </button>
-
+ 
       <div class="hero-seals" aria-label="Garantias do simulador">
         <span class="hero-seal">
           <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
@@ -499,39 +502,40 @@
           Resultado imediato
         </span>
       </div>
-
+ 
     </div>
   </section>
-
+ 
   <!-- ══════════════════════════════════════════
        QUIZ
   ══════════════════════════════════════════ -->
   <div class="quiz-container" id="quizContainer" aria-label="Simulador de troca de casa">
-
+ 
     <header class="quiz-header">
-      <div class="quiz-header-brand">
-        <div class="quiz-header-mark" aria-hidden="true">G4</div>
-        <span class="quiz-header-name">Grupo G4 Remax</span>
+      <div class="quiz-header-inner">
+        <div class="quiz-header-brand">
+          <img class="quiz-header-logo" src="00-LOGOS_G4_MarcaG4SemAssinatura-Cinza.png" alt="Grupo G4 REMAX">
+        </div>
+        <span class="quiz-step-indicator" id="stepLabel" aria-live="polite" aria-atomic="true">Passo 1 de 5</span>
       </div>
-      <span class="quiz-step-indicator" id="stepLabel" aria-live="polite" aria-atomic="true">Passo 1 de 5</span>
     </header>
-
+ 
     <div class="quiz-body">
-
+ 
       <!-- Barra de progresso acima do card, mesma largura -->
       <div class="quiz-prog-bar" role="progressbar" aria-label="Progresso do simulador" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
         <div class="quiz-prog-fill" id="progressBar" style="width:20%"></div>
       </div>
-
+ 
       <!-- Card branco que contém todos os passos -->
       <div class="quiz-card">
-
+ 
       <!-- ── PASSO 1 ── -->
       <div class="step active" id="step1">
         <p class="step-eyebrow">Passo 1 de 5</p>
         <h2 class="step-title">O que procura?</h2>
         <p class="step-subtitle">Conte-nos o que tem em mente para a sua próxima casa.</p>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" id="lbl-p-tipo">Tipo de imóvel</label>
           <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-p-tipo">
@@ -540,7 +544,7 @@
           </div>
           <p class="errmsg" id="err-p-tipo">Selecione o tipo de imóvel que procura.</p>
         </div>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" id="lbl-p-tip">Tipologia pretendida</label>
           <div class="opts opts-4" role="radiogroup" aria-labelledby="lbl-p-tip">
@@ -551,20 +555,20 @@
           </div>
           <p class="errmsg" id="err-p-tip">Selecione a tipologia pretendida.</p>
         </div>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" for="inp-localizacao">Localização pretendida</label>
           <input type="text" id="inp-localizacao" class="finput" placeholder="Ex: Lisboa, Porto, Cascais…" autocomplete="off">
           <p class="errmsg" id="err-localizacao">Indique a localização pretendida.</p>
         </div>
       </div>
-
+ 
       <!-- ── PASSO 2 ── -->
       <div class="step" id="step2">
         <p class="step-eyebrow">Passo 2 de 5</p>
         <h2 class="step-title">O que precisa de vender?</h2>
         <p class="step-subtitle">Ajuda-nos a perceber a sua situação atual para definir a melhor estratégia.</p>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" id="lbl-v-tipo">Tem imóvel para vender?</label>
           <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-v-tipo">
@@ -575,7 +579,7 @@
           </div>
           <p class="errmsg" id="err-v-tipo">Selecione uma opção.</p>
         </div>
-
+ 
         <!-- Condicional: tipologia atual (oculta se Terreno ou Não preciso) -->
         <div class="cond" id="cond-v-tip">
           <div class="field-group">
@@ -589,7 +593,7 @@
             <p class="errmsg" id="err-v-tip">Selecione a tipologia atual.</p>
           </div>
         </div>
-
+ 
         <!-- Condicional: estado e zona (ocultos se Não preciso) -->
         <div class="cond" id="cond-v-extra">
           <div class="field-group">
@@ -609,13 +613,13 @@
           </div>
         </div>
       </div>
-
+ 
       <!-- ── PASSO 3 ── -->
       <div class="step" id="step3">
         <p class="step-eyebrow">Passo 3 de 5</p>
         <h2 class="step-title">A sua margem de manobra</h2>
         <p class="step-subtitle">Estas respostas são confidenciais e permitem-nos dar-lhe um resultado realista.</p>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" id="lbl-credito">Tem crédito habitação ativo?</label>
           <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-credito">
@@ -624,7 +628,7 @@
           </div>
           <p class="errmsg" id="err-credito">Selecione uma opção.</p>
         </div>
-
+ 
         <!-- Condicional: capital em dívida (só se Sim) -->
         <div class="cond" id="cond-divida">
           <div class="field-group">
@@ -639,7 +643,7 @@
             <p class="errmsg" id="err-divida">Selecione o capital em dívida.</p>
           </div>
         </div>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" id="lbl-capitais">Capitais próprios disponíveis</label>
           <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-capitais">
@@ -651,13 +655,13 @@
           <p class="errmsg" id="err-capitais">Selecione os capitais próprios disponíveis.</p>
         </div>
       </div>
-
+ 
       <!-- ── PASSO 4 ── -->
       <div class="step" id="step4">
         <p class="step-eyebrow">Passo 4 de 5</p>
         <h2 class="step-title">Em quanto tempo quer concretizar?</h2>
         <p class="step-subtitle">O prazo influencia diretamente a estratégia mais adequada para si.</p>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" id="lbl-prazo">Prazo para concretizar</label>
           <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-prazo">
@@ -668,7 +672,7 @@
           </div>
           <p class="errmsg" id="err-prazo">Selecione o prazo pretendido.</p>
         </div>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" id="lbl-motivo">Principal motivo da troca</label>
           <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-motivo">
@@ -681,38 +685,38 @@
           <p class="errmsg" id="err-motivo">Selecione o principal motivo.</p>
         </div>
       </div>
-
+ 
       <!-- ── PASSO 5 ── -->
       <div class="step" id="step5">
         <p class="step-eyebrow">Passo 5 de 5</p>
         <h2 class="step-title">Quase lá!</h2>
         <p class="step-subtitle">Deixe os seus dados e receba o seu resultado personalizado.</p>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" for="inp-nome">Nome completo</label>
           <input type="text" id="inp-nome" class="finput" placeholder="O seu nome completo" autocomplete="name">
           <p class="errmsg" id="err-nome">Introduza o seu nome completo.</p>
         </div>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" for="inp-tel">Telemóvel</label>
           <input type="tel" id="inp-tel" class="finput" placeholder="912 345 678" autocomplete="tel">
           <p class="errmsg" id="err-tel">Introduza um número de telemóvel válido (mínimo 9 dígitos).</p>
         </div>
-
+ 
         <div class="field-group">
           <label class="field-label field-required" for="inp-email">E-mail</label>
           <input type="email" id="inp-email" class="finput" placeholder="o.seu@email.com" autocomplete="email">
           <p class="errmsg" id="err-email">Introduza um endereço de e-mail válido.</p>
         </div>
-
+ 
         <p class="gdpr-note">
           Os seus dados são tratados de forma confidencial e utilizados exclusivamente para o contacto solicitado, em conformidade com o RGPD. Não partilhamos as suas informações com terceiros.
         </p>
       </div>
-
+ 
       </div><!-- /quiz-card -->
-
+ 
       <!-- Navegação abaixo do card, com leve espaçamento -->
       <nav class="quiz-nav" aria-label="Navegação do simulador">
         <div class="quiz-nav-inner">
@@ -720,17 +724,17 @@
           <button class="btn-next" id="btnNext" onclick="avancarPasso()">Continuar →</button>
         </div>
       </nav>
-
+ 
     </div><!-- /quiz-body -->
-
+ 
   </div><!-- /quiz-container -->
-
+ 
   <!-- Overlay de envio -->
   <div class="overlay" id="overlay" role="status" aria-live="assertive" aria-label="A calcular resultado">
     <div class="spinner" aria-hidden="true"></div>
     <p class="overlay-text">A calcular o seu resultado…</p>
   </div>
-
+ 
   <!-- ══════════════════════════════════════════
        JAVASCRIPT
   ══════════════════════════════════════════ -->
@@ -745,7 +749,7 @@
     var CHAVE_SS      = 'sim_g4remax';
     var PREFIXO_PAIS  = '351';
     var TOTAL_STEPS   = 5;
-
+ 
     // ═══════════════════════════════════════════
     // ESTADO
     // ═══════════════════════════════════════════
@@ -767,7 +771,7 @@
       tel: '',
       email: ''
     };
-
+ 
     // ═══════════════════════════════════════════
     // INICIAR QUIZ
     // ═══════════════════════════════════════════
@@ -776,7 +780,7 @@
       document.getElementById('quizContainer').style.display = 'block';
       atualizarUI();
     }
-
+ 
     // ═══════════════════════════════════════════
     // OPÇÕES — click e teclado
     // ═══════════════════════════════════════════
@@ -789,11 +793,11 @@
         }
       });
     });
-
+ 
     function selecionarOpt(card) {
       var field = card.dataset.field;
       var val   = card.dataset.val;
-
+ 
       document.querySelectorAll('.opt[data-field="' + field + '"]').forEach(function(c) {
         c.classList.remove('sel', 'err');
         c.setAttribute('aria-checked', 'false');
@@ -801,12 +805,12 @@
       card.classList.add('sel');
       card.setAttribute('aria-checked', 'true');
       A[field] = val;
-
+ 
       // Efeitos secundários
       if (field === 'venda_tipo')    atualizarCamposVenda();
       if (field === 'tem_credito')   atualizarCamposCredito();
     }
-
+ 
     // ═══════════════════════════════════════════
     // CAMPOS CONDICIONAIS
     // ═══════════════════════════════════════════
@@ -814,10 +818,10 @@
       var tipo = A.venda_tipo;
       var temVenda = (tipo !== '' && tipo !== 'Não preciso de vender');
       var temTipologia = (temVenda && tipo !== 'Terreno');
-
+ 
       setVisible('cond-v-tip',   temTipologia);
       setVisible('cond-v-extra', temVenda);
-
+ 
       if (!temTipologia) {
         A.venda_tipologia = '';
         document.querySelectorAll('.opt[data-field="venda_tipologia"]').forEach(function(c) {
@@ -830,7 +834,7 @@
         document.getElementById('inp-zona').value = '';
       }
     }
-
+ 
     function atualizarCamposCredito() {
       var mostra = (A.tem_credito === 'Sim');
       setVisible('cond-divida', mostra);
@@ -839,12 +843,12 @@
         document.getElementById('sel-divida').value = '';
       }
     }
-
+ 
     function setVisible(id, show) {
       var el = document.getElementById(id);
       if (show) el.classList.add('on'); else el.classList.remove('on');
     }
-
+ 
     // ═══════════════════════════════════════════
     // SINCRONIZAR INPUTS DE TEXTO
     // ═══════════════════════════════════════════
@@ -857,7 +861,7 @@
       A.tel                 = document.getElementById('inp-tel').value.trim();
       A.email               = document.getElementById('inp-email').value.trim();
     }
-
+ 
     // Sync em tempo real nos inputs de texto
     ['inp-localizacao','inp-zona','inp-nome','inp-tel','inp-email'].forEach(function(id) {
       document.getElementById(id).addEventListener('input', sincronizarInputs);
@@ -865,14 +869,14 @@
     ['sel-estado','sel-divida'].forEach(function(id) {
       document.getElementById(id).addEventListener('change', sincronizarInputs);
     });
-
+ 
     // ═══════════════════════════════════════════
     // NAVEGAÇÃO
     // ═══════════════════════════════════════════
     function avancarPasso() {
       sincronizarInputs();
       if (!validarPasso(currentStep)) return;
-
+ 
       if (currentStep === TOTAL_STEPS) {
         finalizar();
         return;
@@ -880,39 +884,39 @@
       currentStep++;
       atualizarUI();
     }
-
+ 
     function voltarPasso() {
       if (currentStep <= 1) return;
       currentStep--;
       atualizarUI();
     }
-
+ 
     function atualizarUI() {
       document.querySelectorAll('.step').forEach(function(s, i) {
         s.classList.toggle('active', i + 1 === currentStep);
       });
-
+ 
       var pct = Math.round((currentStep / TOTAL_STEPS) * 100);
       var pb  = document.getElementById('progressBar');
       pb.style.width = pct + '%';
       pb.parentElement.setAttribute('aria-valuenow', pct);
       document.getElementById('stepLabel').textContent = 'Passo ' + currentStep + ' de ' + TOTAL_STEPS;
-
+ 
       var btnBack = document.getElementById('btnBack');
       var btnNext = document.getElementById('btnNext');
       btnBack.style.display = currentStep > 1 ? 'block' : 'none';
       btnNext.textContent   = currentStep === TOTAL_STEPS ? 'Ver resultado →' : 'Continuar →';
       btnNext.disabled      = false;
-
+ 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
+ 
     // ═══════════════════════════════════════════
     // VALIDAÇÃO
     // ═══════════════════════════════════════════
     function validarPasso(passo) {
       var ok = true;
-
+ 
       function erroOpts(field, errId) {
         var els = document.querySelectorAll('.opt[data-field="' + field + '"]');
         if (!A[field]) {
@@ -923,7 +927,7 @@
           esconderErr(errId);
         }
       }
-
+ 
       function erroInput(inputId, errId, testFn) {
         var el  = document.getElementById(inputId);
         var val = el.value.trim();
@@ -934,7 +938,7 @@
           el.classList.remove('err'); esconderErr(errId);
         }
       }
-
+ 
       function erroSelect(selId, errId) {
         var el = document.getElementById(selId);
         if (!el.value) {
@@ -943,13 +947,13 @@
           el.classList.remove('err'); esconderErr(errId);
         }
       }
-
+ 
       if (passo === 1) {
         erroOpts('procura_tipo',      'err-p-tipo');
         erroOpts('procura_tipologia', 'err-p-tip');
         erroInput('inp-localizacao',  'err-localizacao');
       }
-
+ 
       if (passo === 2) {
         erroOpts('venda_tipo', 'err-v-tipo');
         var temVenda = A.venda_tipo && A.venda_tipo !== 'Não preciso de vender';
@@ -960,56 +964,56 @@
           erroInput('inp-zona',    'err-v-zona');
         }
       }
-
+ 
       if (passo === 3) {
         erroOpts('tem_credito', 'err-credito');
         if (A.tem_credito === 'Sim') erroSelect('sel-divida', 'err-divida');
         erroOpts('capitais_proprios', 'err-capitais');
       }
-
+ 
       if (passo === 4) {
         erroOpts('prazo',  'err-prazo');
         erroOpts('motivo', 'err-motivo');
       }
-
+ 
       if (passo === 5) {
         erroInput('inp-nome',  'err-nome',  function(v) { return v.length >= 2; });
         erroInput('inp-tel',   'err-tel',   function(v) { return v.replace(/\D/g,'').length >= 9; });
         erroInput('inp-email', 'err-email', function(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); });
       }
-
+ 
       if (!ok) {
         var firstErr = document.querySelector('#step' + passo + ' .err');
         if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
       return ok;
     }
-
+ 
     function mostrarErr(id)  { var e = document.getElementById(id); if(e) e.classList.add('show'); }
     function esconderErr(id) { var e = document.getElementById(id); if(e) e.classList.remove('show'); }
-
+ 
     // ═══════════════════════════════════════════
     // SCORE
     // ═══════════════════════════════════════════
     function calcularScore() {
       var s = 5;
-
+ 
       // Capitais próprios
       if      (A.capitais_proprios === 'Nenhum') s -= 1;
       else if (A.capitais_proprios === '20–60k') s += 1;
       else if (A.capitais_proprios === '+60k')   s += 2;
-
+ 
       // Sem crédito
       if (A.tem_credito === 'Não') s += 1;
-
+ 
       // Prazo
       if      (A.prazo === 'O mais rápido possível') s -= 1;
       else if (A.prazo === '3–6 meses')              s += 1;
       else if (A.prazo === '>6 meses')               s += 1;
-
+ 
       // Não precisa de vender
       if (A.venda_tipo === 'Não preciso de vender') s += 1;
-
+ 
       // Tipo procurado = tipo a vender
       if (
         A.procura_tipo === A.venda_tipo &&
@@ -1017,13 +1021,13 @@
         A.venda_tipo !== 'Terreno' &&
         A.venda_tipo !== ''
       ) s += 0.5;
-
+ 
       // Capital em dívida > 200k
       if (A.capital_divida === '>200k') s -= 1;
-
+ 
       return Math.max(0, Math.min(10, s));
     }
-
+ 
     // ═══════════════════════════════════════════
     // NORMALIZAR TELEMÓVEL → E.164
     // ═══════════════════════════════════════════
@@ -1034,7 +1038,7 @@
       if (d.length === 9) d = PREFIXO_PAIS + d;   // nº local sem indicativo
       return '+' + d;                              // E.164
     }
-
+ 
     // ═══════════════════════════════════════════
     // ENVIAR WEBHOOK → GoHighLevel
     // ═══════════════════════════════════════════
@@ -1057,7 +1061,7 @@
         '100–200k':'100 000 € – 200 000 €',
         '>200k':   'Mais de 200 000 €'
       };
-
+ 
       var payload = {
         // ── Chaves padrão GHL ──
         name:       A.nome,
@@ -1065,14 +1069,14 @@
         last_name:  last,
         phone:      tel,
         email:      A.email,
-
+ 
         // ── Metadados ──
         timestamp:        new Date().toISOString(),
         origem:           NOME_ORIGEM,
         pagina_url:       window.location.href,
         event_id:         eventId,
         score_viabilidade: Number(score.toFixed(1)),
-
+ 
         // ── Respostas com rótulos legíveis ──
         procura_tipo:       A.procura_tipo,
         procura_tipologia:  A.procura_tipologia,
@@ -1086,11 +1090,11 @@
         capitais_proprios:  lblCapitais[A.capitais_proprios] || A.capitais_proprios,
         prazo:              lblPrazo[A.prazo] || A.prazo,
         motivo:             A.motivo,
-
+ 
         // ── Cópia bruta para depuração ──
         raw: JSON.parse(JSON.stringify(A))
       };
-
+ 
       fetch(WEBHOOK_URL, {
         method: 'POST',
         keepalive: true,
@@ -1098,7 +1102,7 @@
         body: JSON.stringify(payload)
       }).catch(function() {}); // falha silenciosa — o redirect acontece independentemente
     }
-
+ 
     // ═══════════════════════════════════════════
     // FINALIZAR — ORDEM EXATA CONFORME BLOCO 3
     // ═══════════════════════════════════════════
@@ -1106,22 +1110,22 @@
       // Desativa botão para evitar duplo clique
       var btnNext = document.getElementById('btnNext');
       btnNext.disabled = true;
-
+ 
       // Mostra overlay de envio
       document.getElementById('overlay').classList.add('show');
-
+ 
       var score   = calcularScore();
       var tel     = normalizarTel(A.tel);
       var partes  = (A.nome || '').trim().split(/\s+/);
       var first   = partes[0] || '';
       var last    = partes.slice(1).join(' ') || '';
       var eventId = 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-
+ 
       // 1) GUARDA OS DADOS PRIMEIRO — para a página de resultado os ler
       try {
         sessionStorage.setItem(CHAVE_SS, JSON.stringify({ A: A, score: score }));
       } catch(e) {}
-
+ 
       // 2) ADVANCED MATCHING antes do evento — melhora a qualidade de correspondência
       if (typeof fbq === 'function') {
         fbq('init', PIXEL_ID, {
@@ -1131,7 +1135,7 @@
           ln: last
         });
       }
-
+ 
       // 3) DISPARA O LEAD UMA VEZ com eventID (dedup futura com a CAPI)
       //    NÃO fazer window.location aqui — isso cancelaria o beacon do pixel
       if (typeof fbq === 'function') {
@@ -1142,10 +1146,10 @@
           currency:         'EUR'
         }, { eventID: eventId });
       }
-
+ 
       // 4) ENVIA O LEAD → GHL (keepalive: true sobrevive ao redirect)
       enviarWebhook(tel, first, last, score, eventId);
-
+ 
       // 5) SÓ REDIRECIONA DEPOIS de dar tempo ao beacon do pixel para sair.
       //    Sem este atraso, o window.location CANCELA o pedido do Meta.
       var jaFoi = false;
@@ -1157,6 +1161,7 @@
       setTimeout(ir, 800); // ≈800 ms para o beacon sair
     }
   </script>
-
+ 
 </body>
 </html>
+ 
