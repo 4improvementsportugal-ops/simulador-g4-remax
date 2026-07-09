@@ -1101,7 +1101,7 @@
       fetch(WEBHOOK_URL, {
         method: 'POST',
         keepalive: true,
-        headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       }).catch(function() {}); // falha silenciosa — o redirect acontece independentemente
     }
