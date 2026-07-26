@@ -1,1169 +1,811 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Descubra em menos de 3 minutos se a troca de casa é viável para si. Simulador gratuito do GRUPO G4 REMAX.">
-  <title>Simulador de Troca de Casa | GRUPO G4 REMAX</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diagnóstico de Venda · Grupo G4 Remax</title>
+<meta name="description" content="Descubra em 3 minutos o que está a travar a venda da sua casa: documentos, preço e prontidão.">
+<meta name="robots" content="index,follow">
 
-  <!-- ═══════════════════════════════════════════
-       META PIXEL — substitui 1676725573619027
-       ═══════════════════════════════════════════ -->
-  <script>
-    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-    document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1676725573619027');
-    fbq('track', 'PageView');
-  </script>
-  <noscript>
-    <img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1676725573619027&ev=PageView&noscript=1"
-      alt="" aria-hidden="true">
-  </noscript>
-  <!-- FIM META PIXEL -->
+<script>
+/* ─────────────────────────────────────────────────────────────
+   META PIXEL — carregamento condicionado ao consentimento
+   ───────────────────────────────────────────────────────────── */
+var PIXEL_ID   = '<COLOCAR_PIXEL_ID_AQUI>';
+var PIXEL_ATIVO = PIXEL_ID.indexOf('AQUI') === -1;
+var CHAVE_UNICA = 'diag_g4remax';
+var CHAVE_CONSENTIMENTO = CHAVE_UNICA + '_cookies';
+var WEBHOOK_URL = '';
+var NOME_ORIGEM = 'Grupo G4 Remax - Diagnostico de Venda';
+var MARCA = 'Grupo G4 Remax';
+var PREFIXO_PAIS = '351';
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+function carregarPixel(){
+  if(!PIXEL_ATIVO || window.fbq) return;
+  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+  (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', PIXEL_ID);
+  fbq('track','PageView');
+}
+function temConsentimento(){
+  try { return localStorage.getItem(CHAVE_CONSENTIMENTO) === 'aceite'; }
+  catch(e){ return false; }
+}
+function recusouConsentimento(){
+  try { return localStorage.getItem(CHAVE_CONSENTIMENTO) === 'recusado'; }
+  catch(e){ return false; }
+}
+if (temConsentimento()) carregarPixel();
+</script>
 
-  <style>
-    /* ── RESET & CUSTOM PROPERTIES ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    :root {
-      --primary:      #004e9c;
-      --primary-dark: #003d7a;
-      --primary-light:#e8f0fa;
-      --accent:       #9a9c9e;
-      --bg:           #ffffff;
-      --surface:      #f4f7fb;
-      --text-dark:    #202020;
-      --text-mid:     #4a4a4a;
-      --text-light:   #6b6b6b;
-      --error:        #c62828;
-      --border:       #dde3ec;
-      --shadow-sm:    0 1px 4px rgba(0,78,156,0.08);
-      --shadow-md:    0 4px 20px rgba(0,78,156,0.12);
-      --radius:       12px;
-      --radius-sm:    8px;
-    }
+<style>
+:root{
+  --azul:#004e9b;
+  --azul-escuro:#003a73;
+  --vermelho:#df0d11;
+  --fundo:#F7F8FA;
+  --branco:#ffffff;
+  --texto:#101720;
+  --texto-2:#5b6673;
+  --linha:#e3e7ec;
+  --raio:14px;
+  --max:1080px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--fundo);
+  color:var(--texto);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px;border-radius:4px}
 
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-    body  { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-dark); min-height: 100vh; line-height: 1.6; }
+/* ── HERO — primeira dobra, centrada, sem simulador ── */
+.hero{
+  position:relative;
+  min-height:100svh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:32px 22px 40px;
+  background:
+    radial-gradient(58% 42% at 12% 4%, rgba(0,78,155,.09), transparent 62%),
+    radial-gradient(50% 40% at 92% 96%, rgba(223,13,17,.06), transparent 60%),
+    var(--fundo);
+}
+.hero-inner{max-width:640px;width:100%;margin:0 auto}
+.avatar{
+  width:74px;height:74px;border-radius:50%;
+  margin:0 auto 26px;
+  border:3px solid var(--branco);
+  box-shadow:0 6px 22px rgba(0,78,155,.20);
+  overflow:hidden;
+}
+.avatar img{width:100%;height:100%;object-fit:cover}
+h1{
+  font-family:'Instrument Serif',Georgia,serif;
+  font-weight:400;
+  font-size:clamp(31px,7.6vw,54px);
+  line-height:1.08;
+  letter-spacing:-.026em;
+  text-wrap:balance;
+  margin-bottom:18px;
+}
+h1 em{
+  display:block;
+  font-style:italic;
+  color:var(--vermelho);
+  font-size:.72em;
+  margin-top:8px;
+}
+.sub{
+  font-size:clamp(14.5px,3.7vw,17px);
+  color:var(--texto-2);
+  max-width:520px;
+  margin:0 auto 28px;
+  text-wrap:pretty;
+}
+.cta{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--azul);color:#fff;font-weight:600;font-size:16.5px;
+  padding:18px 34px;border-radius:var(--raio);
+  width:100%;max-width:380px;
+  box-shadow:0 10px 26px rgba(0,78,155,.26);
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.cta:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(0,78,155,.32)}
+.cta:active{transform:translateY(0)}
+.selos{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:8px 18px;
+  margin-top:22px;font-size:12.5px;color:var(--texto-2);
+}
+.selos span{display:inline-flex;align-items:center;gap:7px}
+.selos span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--azul)}
+.regua{
+  width:52px;height:2px;background:var(--vermelho);
+  margin:0 auto 22px;border-radius:2px;
+}
+@media (max-height:700px){
+  .avatar{width:58px;height:58px;margin-bottom:18px}
+  .regua{margin-bottom:16px}
+  h1{font-size:clamp(27px,6.9vw,44px)}
+  .sub{margin-bottom:20px}
+  .cta{padding:16px 28px}
+}
 
-    /* ══════════════════════════════════════════
-       HERO
-    ══════════════════════════════════════════ */
-    .hero {
-      min-height: 100vh;
-      background: linear-gradient(150deg, #002f5f 0%, #004e9c 55%, #1565c0 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2.5rem 1.5rem 3rem;
-      position: relative;
-      overflow: hidden;
-      text-align: center;
-    }
+/* ── QUIZ — segunda dobra, arranca de imediato ── */
+.quiz-wrap{padding:0 18px 70px}
+.quiz{
+  max-width:660px;margin:0 auto;
+  background:var(--branco);
+  border:1px solid var(--linha);
+  border-radius:20px;
+  padding:30px 24px 28px;
+  box-shadow:0 18px 46px rgba(16,23,32,.07);
+}
+.barra{height:4px;background:var(--linha);border-radius:4px;overflow:hidden;margin-bottom:12px}
+.barra i{display:block;height:100%;width:20%;background:var(--azul);border-radius:4px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.contador{font-size:12px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--azul);margin-bottom:20px}
+.passo{display:none;animation:entra .35s ease}
+.passo.ativo{display:block}
+@keyframes entra{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.passo h2{
+  font-family:'Instrument Serif',Georgia,serif;font-weight:400;
+  font-size:clamp(23px,5.4vw,30px);line-height:1.18;letter-spacing:-.02em;
+  margin-bottom:26px;
+}
+.campo{margin-bottom:26px}
+.campo > label,.rotulo{
+  display:block;font-size:14.5px;font-weight:600;margin-bottom:10px;
+}
+.ajuda{display:block;font-size:12.5px;font-weight:400;color:var(--texto-2);margin-top:3px}
+.grelha{display:grid;gap:9px}
+.grelha.c1{grid-template-columns:1fr}
+.grelha.c2{grid-template-columns:1fr 1fr}
+.grelha.c4{grid-template-columns:repeat(4,1fr)}
+.op{
+  border:1.5px solid var(--linha);background:#fff;border-radius:11px;
+  padding:14px 15px;text-align:left;font-size:14.5px;line-height:1.35;
+  transition:border-color .16s, background .16s, box-shadow .16s;
+  min-height:52px;display:flex;align-items:center;
+}
+.grelha.c4 .op{justify-content:center;text-align:center;padding:14px 6px;font-weight:600}
+.op:hover{border-color:#b9c6d6}
+.op.sel{border-color:var(--azul);background:rgba(0,78,155,.06);box-shadow:inset 0 0 0 1px var(--azul)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  border:1.5px solid var(--linha);background:#fff;border-radius:100px;
+  padding:11px 16px;font-size:14px;transition:all .16s;
+}
+.chip:hover{border-color:#b9c6d6}
+.chip.sel{border-color:var(--azul);background:var(--azul);color:#fff}
+input[type=text],input[type=tel],input[type=email],input[type=number],select{
+  width:100%;border:1.5px solid var(--linha);border-radius:11px;
+  padding:14px 15px;background:#fff;font-size:15.5px;
+}
+select{appearance:none;background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235b6673' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 16px center;padding-right:42px}
+input:focus,select:focus{border-color:var(--azul);outline:none;box-shadow:0 0 0 3px rgba(0,78,155,.12)}
+.campo.erro .op,.campo.erro .chip,.campo.erro input,.campo.erro select{border-color:var(--vermelho)}
+.campo.erro input,.campo.erro select{background:rgba(223,13,17,.04)}
+.msg-erro{display:none;color:var(--vermelho);font-size:13px;font-weight:500;margin-top:8px}
+.campo.erro .msg-erro{display:block}
+.consent-check{display:flex;gap:12px;align-items:flex-start;font-size:13.8px;line-height:1.45;color:var(--texto-2)}
+.consent-check input{width:20px;height:20px;min-width:20px;margin-top:1px;accent-color:var(--azul)}
+.navs{display:flex;gap:10px;margin-top:6px}
+.btn-sec{
+  flex:0 0 auto;border:1.5px solid var(--linha);border-radius:var(--raio);
+  padding:16px 22px;font-weight:600;font-size:15px;color:var(--texto-2);background:#fff;
+}
+.btn-sec:hover{border-color:#b9c6d6}
+.btn-prim{
+  flex:1;background:var(--azul);color:#fff;border-radius:var(--raio);
+  padding:16px 22px;font-weight:600;font-size:15.5px;
+  transition:opacity .16s, transform .16s;
+}
+.btn-prim:hover{transform:translateY(-1px)}
+.btn-prim:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.nota-passo{font-size:12.5px;color:var(--texto-2);margin-top:16px;text-align:center}
 
-    /* Subtle dot pattern */
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-      background-size: 28px 28px;
-      pointer-events: none;
-    }
+/* ── RODAPÉ ── */
+footer{
+  text-align:center;padding:0 22px 46px;font-size:12.5px;color:var(--texto-2);
+}
+footer strong{display:block;color:var(--texto);font-weight:600;margin-bottom:6px;font-size:13px}
 
-    /* Decorative arc */
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: -40px; left: -10%;
-      width: 120%; height: 160px;
-      background: var(--bg);
-      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-    }
+/* ── BANNER DE CONSENTIMENTO ── */
+.cookies{
+  position:fixed;left:0;right:0;bottom:0;z-index:60;
+  background:var(--branco);border-top:1px solid var(--linha);
+  box-shadow:0 -8px 30px rgba(16,23,32,.10);
+  padding:16px 18px calc(16px + env(safe-area-inset-bottom));
+  display:none;
+}
+.cookies.on{display:block}
+.cookies-in{max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.cookies p{font-size:13px;color:var(--texto-2);flex:1 1 340px;line-height:1.45}
+.cookies-btns{display:flex;gap:9px;flex:0 0 auto}
+.cookies-btns button{padding:11px 20px;border-radius:10px;font-size:14px;font-weight:600}
+.c-aceitar{background:var(--azul);color:#fff}
+.c-recusar{border:1.5px solid var(--linha);color:var(--texto-2)}
 
-    .hero-inner {
-      position: relative;
-      z-index: 2;
-      max-width: 680px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .hero-logotype {
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      margin-bottom: 2.5rem;
-      opacity: 0.75;
-    }
-    .hero-logotype-mark {
-      width: 36px; height: 36px;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.3);
-      border-radius: 6px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 0.85rem; font-weight: 700;
-      color: #fff; letter-spacing: 0.04em;
-    }
-    .hero-logotype-name {
-      font-family: 'Inter', sans-serif;
-      font-size: 0.7rem; font-weight: 600;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.85);
-    }
-
-    .hero-chip {
-      background: rgba(255,255,255,0.14);
-      border: 1px solid rgba(255,255,255,0.28);
-      color: rgba(255,255,255,0.9);
-      font-size: 0.7rem; font-weight: 700;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      padding: 0.35rem 0.9rem;
-      border-radius: 2rem;
-      margin-bottom: 1.6rem;
-    }
-
-    .hero-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.85rem, 5.5vw, 3.1rem);
-      font-weight: 700;
-      color: #ffffff;
-      line-height: 1.22;
-      margin-bottom: 1.2rem;
-    }
-    .hero-title em {
-      font-style: italic;
-      color: rgba(255,255,255,0.78);
-    }
-
-    .hero-subtitle {
-      font-size: clamp(0.95rem, 2.4vw, 1.1rem);
-      color: rgba(255,255,255,0.75);
-      line-height: 1.75;
-      max-width: 540px;
-      margin-bottom: 2.4rem;
-    }
-
-    .hero-cta {
-      background: #ffffff;
-      color: var(--primary);
-      border: none;
-      border-radius: 3rem;
-      padding: 1.05rem 2.6rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 1rem; font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 0.01em;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.24);
-    }
-    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,0.28); }
-    .hero-cta:active { transform: translateY(0px); }
-
-    .hero-seals {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem 1.75rem;
-      justify-content: center;
-      margin-top: 1.8rem;
-    }
-    .hero-seal {
-      display: flex; align-items: center; gap: 0.4rem;
-      font-size: 0.75rem; font-weight: 500;
-      color: rgba(255,255,255,0.58);
-    }
-    .hero-seal svg { flex-shrink: 0; }
-
-    /* ══════════════════════════════════════════
-       QUIZ CONTAINER
-    ══════════════════════════════════════════ */
-    .quiz-container { display: none; min-height: 100vh; background: var(--surface); }
-
-    /* Header — logo à esquerda, passo à direita */
-    .quiz-header {
-      background: var(--primary);
-      padding: 0;
-      position: sticky; top: 0; z-index: 50;
-    }
-    .quiz-header-inner {
-      max-width: 850px;
-      margin: 0 auto;
-      padding: 0.9rem 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .quiz-header-brand {
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .quiz-header-mark {
-      width: 26px; height: 26px;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 0.68rem; font-weight: 700; color: #fff;
-    }
-    .quiz-header-name {
-      font-size: 0.66rem; font-weight: 600;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: rgba(255,255,255,0.8);
-    }
-    .quiz-step-indicator {
-      font-size: 0.7rem; font-weight: 500;
-      color: rgba(255,255,255,0.65);
-      letter-spacing: 0.06em;
-      white-space: nowrap;
-    }
-
-    /* Barra de progresso — acima do card branco, mesma largura */
-    .quiz-prog-bar {
-      height: 5px;
-      background: rgba(0,78,156,0.12);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 0.875rem;
-    }
-    .quiz-prog-fill {
-      height: 100%;
-      background: var(--primary);
-      border-radius: 3px;
-      transition: width 0.45s cubic-bezier(.4,0,.2,1);
-    }
-
-    /* Body — área de fundo cinzento, centrada */
-    .quiz-body {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 1.5rem 1.25rem 2.5rem;
-    }
-
-    /* Card branco centralizado que contém os passos */
-    .quiz-card {
-      background: #ffffff;
-      border-radius: 18px;
-      box-shadow:
-        0 4px 28px rgba(0,78,156,0.10),
-        0 1px 6px rgba(0,0,0,0.05);
-      padding: 1.85rem 1.65rem 1.5rem;
-      overflow: hidden;
-    }
-
-    @media (max-width: 520px) {
-      .quiz-card {
-        border-radius: 14px;
-        padding: 1.4rem 1.2rem 1.25rem;
-      }
-    }
-
-    /* Steps */
-    .step { display: none; }
-    .step.active { display: block; animation: fadeSlide 0.28s ease; }
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .step-eyebrow {
-      font-size: 0.68rem; font-weight: 700;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--primary); margin-bottom: 0.4rem;
-      opacity: 0.8;
-    }
-    .step-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.55rem; font-weight: 700;
-      color: var(--text-dark); margin-bottom: 0.35rem;
-      line-height: 1.3;
-    }
-    .step-subtitle {
-      font-size: 0.875rem; color: var(--text-light);
-      margin-bottom: 1.75rem; line-height: 1.6;
-    }
-
-    /* Field groups */
-    .field-group { margin-bottom: 1.4rem; }
-
-    .field-label {
-      display: block;
-      font-size: 0.82rem; font-weight: 600;
-      color: var(--text-dark); margin-bottom: 0.5rem;
-    }
-    .field-required::after { content: ' *'; color: var(--error); }
-
-    /* Option grids */
-    .opts { display: grid; gap: 0.5rem; }
-    .opts-2 { grid-template-columns: 1fr 1fr; }
-    .opts-4 { grid-template-columns: repeat(4, 1fr); }
-
-    @media (max-width: 380px) {
-      .opts-4 { grid-template-columns: 1fr 1fr; }
-    }
-
-    .opt {
-      background: #f7f9fc;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem 0.5rem;
-      text-align: center;
-      font-size: 0.85rem; font-weight: 500;
-      color: var(--text-dark);
-      cursor: pointer;
-      user-select: none;
-      transition: border-color 0.15s, background 0.15s, color 0.15s;
-      line-height: 1.3;
-    }
-    .opt:hover { border-color: var(--primary); background: var(--primary-light); }
-    .opt.sel {
-      border-color: var(--primary);
-      background: var(--primary-light);
-      color: var(--primary); font-weight: 600;
-    }
-    .opt.err { border-color: var(--error) !important; }
-
-    /* Text inputs */
-    .finput {
-      width: 100%;
-      padding: 0.85rem 1rem;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem; color: var(--text-dark);
-      background: var(--bg);
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    .finput:focus { border-color: var(--primary); }
-    .finput.err { border-color: var(--error); }
-
-    /* Selects */
-    .fselect {
-      width: 100%;
-      padding: 0.85rem 2.5rem 0.85rem 1rem;
-      border: 2px solid var(--border);
-      border-radius: var(--radius-sm);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem; color: var(--text-dark);
-      background: var(--bg);
-      cursor: pointer; outline: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3E%3Cpath fill='%239a9c9e' d='M7 9.5L2 4h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.9rem center;
-      transition: border-color 0.15s;
-    }
-    .fselect:focus { border-color: var(--primary); }
-    .fselect.err { border-color: var(--error); }
-
-    /* Error messages */
-    .errmsg {
-      display: none;
-      font-size: 0.76rem; font-weight: 500;
-      color: var(--error); margin-top: 0.4rem;
-    }
-    .errmsg.show { display: block; }
-
-    /* Conditional fields */
-    .cond { display: none; }
-    .cond.on { display: block; }
-
-    /* GDPR notice */
-    .gdpr-note {
-      font-size: 0.73rem; color: var(--accent);
-      line-height: 1.55; margin-top: 0.75rem;
-    }
-
-    /* ── NAVIGATION (abaixo do card, no fluxo normal) ── */
-    .quiz-nav {
-      margin-top: 0.875rem;
-    }
-    .quiz-nav-inner {
-      display: flex;
-      gap: 0.65rem;
-    }
-    .btn-back {
-      flex: 0 0 auto;
-      padding: 0.85rem 1.2rem;
-      border: 2px solid var(--border);
-      border-radius: 3rem;
-      background: transparent;
-      color: var(--text-light);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.88rem; font-weight: 500;
-      cursor: pointer;
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .btn-back:hover { border-color: var(--accent); color: var(--text-dark); }
-
-    .btn-next {
-      flex: 1;
-      padding: 0.9rem 1.4rem;
-      border: none; border-radius: 3rem;
-      background: var(--primary);
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.95rem; font-weight: 700;
-      cursor: pointer; letter-spacing: 0.01em;
-      transition: background 0.15s, transform 0.1s;
-    }
-    .btn-next:hover { background: var(--primary-dark); }
-    .btn-next:active { transform: scale(0.98); }
-    .btn-next:disabled { background: var(--accent); cursor: not-allowed; }
-
-    /* ── SENDING OVERLAY ── */
-    .overlay {
-      display: none;
-      position: fixed; inset: 0;
-      background: rgba(0,62,124,0.96);
-      z-index: 200;
-      flex-direction: column;
-      align-items: center; justify-content: center;
-      color: #fff;
-    }
-    .overlay.show { display: flex; }
-    .spinner {
-      width: 46px; height: 46px;
-      border: 4px solid rgba(255,255,255,0.25);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.75s linear infinite;
-      margin-bottom: 1rem;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .overlay-text { font-size: 1rem; font-weight: 500; opacity: 0.88; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .step.active { animation: none; }
-      .spinner { animation: none; }
-    }
-  </style>
+@media (min-width:900px){
+  .quiz{padding:40px 44px 36px}
+  .hero{padding:40px 22px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
 </head>
 <body>
 
-  <!-- ══════════════════════════════════════════
-       HERO
-  ══════════════════════════════════════════ -->
-  <section class="hero" id="hero" aria-label="Simulador de Troca de Casa G4 REMAX">
-    <div class="hero-inner">
-
-      <div class="hero-logotype" aria-label="GRUPO G4 REMAX">
-        <div class="hero-logotype-mark" aria-hidden="true">G4</div>
-        <span class="hero-logotype-name">Grupo G4 Remax</span>
-      </div>
-
-      <span class="hero-chip" role="note">Simulador Gratuito · Resultado Imediato</span>
-
-      <h1 class="hero-title">
-        A sua próxima casa já existe.<br>
-        <em>Descubra se está pronto para avançar.</em>
-      </h1>
-
-      <p class="hero-subtitle">
-        Responda a 5 perguntas e saiba, em menos de 3 minutos, se a troca de casa é viável para si — e qual o próximo passo concreto para a concretizar.
-      </p>
-
-      <button class="hero-cta" id="btnIniciar" onclick="iniciarQuiz()" aria-label="Iniciar simulação de troca de casa">
-        Iniciar Simulação →
-      </button>
-
-      <div class="hero-seals" aria-label="Garantias do simulador">
-        <span class="hero-seal">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-            <circle cx="6.5" cy="6.5" r="6" stroke="rgba(255,255,255,0.55)" stroke-width="1"/>
-            <path d="M4 6.5l1.8 1.8L9 4.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Menos de 3 minutos
-        </span>
-        <span class="hero-seal">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-            <circle cx="6.5" cy="6.5" r="6" stroke="rgba(255,255,255,0.55)" stroke-width="1"/>
-            <path d="M4 6.5l1.8 1.8L9 4.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Sem compromisso
-        </span>
-        <span class="hero-seal">
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none" aria-hidden="true">
-            <circle cx="6.5" cy="6.5" r="6" stroke="rgba(255,255,255,0.55)" stroke-width="1"/>
-            <path d="M4 6.5l1.8 1.8L9 4.5" stroke="rgba(255,255,255,0.55)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          Resultado imediato
-        </span>
-      </div>
-
+<!-- ══════ PRIMEIRA DOBRA ══════ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="avatar"><img src="data:image/png;base64,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" alt="Grupo G4 Remax" width="74" height="74"></div>
+    <div class="regua" aria-hidden="true"></div>
+    <h1>A sua casa está pronta para ir a mercado?<em>Ou vai ficar meses à espera de um comprador?</em></h1>
+    <p class="sub">Duas casas iguais, na mesma rua: uma vende em seis semanas, a outra fica oito meses. A diferença raramente é o imóvel — é um documento em falta ou um preço mal ancorado. Descubra onde está a sua.</p>
+    <button class="cta" id="btnComecar">Começar o diagnóstico →</button>
+    <div class="selos">
+      <span>3 minutos</span><span>Sem compromisso</span><span>Resultado imediato</span>
     </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════
-       QUIZ
-  ══════════════════════════════════════════ -->
-  <div class="quiz-container" id="quizContainer" aria-label="Simulador de troca de casa">
-
-    <header class="quiz-header">
-      <div class="quiz-header-inner">
-        <div class="quiz-header-brand">
-          <div class="quiz-header-mark" aria-hidden="true">G4</div>
-          <span class="quiz-header-name">Grupo G4 Remax</span>
-        </div>
-        <span class="quiz-step-indicator" id="stepLabel" aria-live="polite" aria-atomic="true">Passo 1 de 5</span>
-      </div>
-    </header>
-
-    <div class="quiz-body">
-
-      <!-- Barra de progresso acima do card, mesma largura -->
-      <div class="quiz-prog-bar" role="progressbar" aria-label="Progresso do simulador" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100">
-        <div class="quiz-prog-fill" id="progressBar" style="width:20%"></div>
-      </div>
-
-      <!-- Card branco que contém todos os passos -->
-      <div class="quiz-card">
-
-      <!-- ── PASSO 1 ── -->
-      <div class="step active" id="step1">
-        <p class="step-eyebrow">Passo 1 de 5</p>
-        <h2 class="step-title">O que procura?</h2>
-        <p class="step-subtitle">Conte-nos o que tem em mente para a sua próxima casa.</p>
-
-        <div class="field-group">
-          <label class="field-label field-required" id="lbl-p-tipo">Tipo de imóvel</label>
-          <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-p-tipo">
-            <div class="opt" data-field="procura_tipo" data-val="Apartamento" role="radio" aria-checked="false" tabindex="0">Apartamento</div>
-            <div class="opt" data-field="procura_tipo" data-val="Moradia" role="radio" aria-checked="false" tabindex="0">Moradia</div>
-          </div>
-          <p class="errmsg" id="err-p-tipo">Selecione o tipo de imóvel que procura.</p>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label field-required" id="lbl-p-tip">Tipologia pretendida</label>
-          <div class="opts opts-4" role="radiogroup" aria-labelledby="lbl-p-tip">
-            <div class="opt" data-field="procura_tipologia" data-val="T1" role="radio" aria-checked="false" tabindex="0">T1</div>
-            <div class="opt" data-field="procura_tipologia" data-val="T2" role="radio" aria-checked="false" tabindex="0">T2</div>
-            <div class="opt" data-field="procura_tipologia" data-val="T3" role="radio" aria-checked="false" tabindex="0">T3</div>
-            <div class="opt" data-field="procura_tipologia" data-val="T4+" role="radio" aria-checked="false" tabindex="0">T4+</div>
-          </div>
-          <p class="errmsg" id="err-p-tip">Selecione a tipologia pretendida.</p>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label field-required" for="inp-localizacao">Localização pretendida</label>
-          <input type="text" id="inp-localizacao" class="finput" placeholder="Ex: Lisboa, Porto, Cascais…" autocomplete="off">
-          <p class="errmsg" id="err-localizacao">Indique a localização pretendida.</p>
-        </div>
-      </div>
-
-      <!-- ── PASSO 2 ── -->
-      <div class="step" id="step2">
-        <p class="step-eyebrow">Passo 2 de 5</p>
-        <h2 class="step-title">O que precisa de vender?</h2>
-        <p class="step-subtitle">Ajuda-nos a perceber a sua situação atual para definir a melhor estratégia.</p>
-
-        <div class="field-group">
-          <label class="field-label field-required" id="lbl-v-tipo">Tem imóvel para vender?</label>
-          <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-v-tipo">
-            <div class="opt" data-field="venda_tipo" data-val="Apartamento" role="radio" aria-checked="false" tabindex="0">Apartamento</div>
-            <div class="opt" data-field="venda_tipo" data-val="Moradia" role="radio" aria-checked="false" tabindex="0">Moradia</div>
-            <div class="opt" data-field="venda_tipo" data-val="Terreno" role="radio" aria-checked="false" tabindex="0">Terreno</div>
-            <div class="opt" data-field="venda_tipo" data-val="Não preciso de vender" role="radio" aria-checked="false" tabindex="0" style="font-size:0.8rem;line-height:1.2;">Não preciso<br>de vender</div>
-          </div>
-          <p class="errmsg" id="err-v-tipo">Selecione uma opção.</p>
-        </div>
-
-        <!-- Condicional: tipologia atual (oculta se Terreno ou Não preciso) -->
-        <div class="cond" id="cond-v-tip">
-          <div class="field-group">
-            <label class="field-label field-required" id="lbl-v-tip">Tipologia atual</label>
-            <div class="opts opts-4" role="radiogroup" aria-labelledby="lbl-v-tip">
-              <div class="opt" data-field="venda_tipologia" data-val="T1" role="radio" aria-checked="false" tabindex="0">T1</div>
-              <div class="opt" data-field="venda_tipologia" data-val="T2" role="radio" aria-checked="false" tabindex="0">T2</div>
-              <div class="opt" data-field="venda_tipologia" data-val="T3" role="radio" aria-checked="false" tabindex="0">T3</div>
-              <div class="opt" data-field="venda_tipologia" data-val="T4+" role="radio" aria-checked="false" tabindex="0">T4+</div>
-            </div>
-            <p class="errmsg" id="err-v-tip">Selecione a tipologia atual.</p>
-          </div>
-        </div>
-
-        <!-- Condicional: estado e zona (ocultos se Não preciso) -->
-        <div class="cond" id="cond-v-extra">
-          <div class="field-group">
-            <label class="field-label field-required" for="sel-estado">Estado do imóvel</label>
-            <select id="sel-estado" class="fselect">
-              <option value="">Selecione o estado…</option>
-              <option value="Novo/recuperado">Novo / recuperado</option>
-              <option value="Usado bom estado">Usado — bom estado</option>
-              <option value="Precisa de obras">Precisa de obras</option>
-            </select>
-            <p class="errmsg" id="err-v-estado">Selecione o estado do imóvel.</p>
-          </div>
-          <div class="field-group">
-            <label class="field-label field-required" for="inp-zona">Zona do imóvel atual</label>
-            <input type="text" id="inp-zona" class="finput" placeholder="Ex: Amadora, Setúbal, Braga…" autocomplete="off">
-            <p class="errmsg" id="err-v-zona">Indique a zona do imóvel.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── PASSO 3 ── -->
-      <div class="step" id="step3">
-        <p class="step-eyebrow">Passo 3 de 5</p>
-        <h2 class="step-title">A sua margem de manobra</h2>
-        <p class="step-subtitle">Estas respostas são confidenciais e permitem-nos dar-lhe um resultado realista.</p>
-
-        <div class="field-group">
-          <label class="field-label field-required" id="lbl-credito">Tem crédito habitação ativo?</label>
-          <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-credito">
-            <div class="opt" data-field="tem_credito" data-val="Sim" role="radio" aria-checked="false" tabindex="0">Sim</div>
-            <div class="opt" data-field="tem_credito" data-val="Não" role="radio" aria-checked="false" tabindex="0">Não</div>
-          </div>
-          <p class="errmsg" id="err-credito">Selecione uma opção.</p>
-        </div>
-
-        <!-- Condicional: capital em dívida (só se Sim) -->
-        <div class="cond" id="cond-divida">
-          <div class="field-group">
-            <label class="field-label field-required" for="sel-divida">Capital em dívida</label>
-            <select id="sel-divida" class="fselect">
-              <option value="">Selecione o valor…</option>
-              <option value="&lt;50k">Menos de 50 000 €</option>
-              <option value="50–100k">50 000 € a 100 000 €</option>
-              <option value="100–200k">100 000 € a 200 000 €</option>
-              <option value="&gt;200k">Mais de 200 000 €</option>
-            </select>
-            <p class="errmsg" id="err-divida">Selecione o capital em dívida.</p>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label field-required" id="lbl-capitais">Capitais próprios disponíveis</label>
-          <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-capitais">
-            <div class="opt" data-field="capitais_proprios" data-val="Nenhum" role="radio" aria-checked="false" tabindex="0">Nenhum</div>
-            <div class="opt" data-field="capitais_proprios" data-val="até 20k" role="radio" aria-checked="false" tabindex="0">Até 20 000 €</div>
-            <div class="opt" data-field="capitais_proprios" data-val="20–60k" role="radio" aria-checked="false" tabindex="0">20 000 € – 60 000 €</div>
-            <div class="opt" data-field="capitais_proprios" data-val="+60k" role="radio" aria-checked="false" tabindex="0">Mais de 60 000 €</div>
-          </div>
-          <p class="errmsg" id="err-capitais">Selecione os capitais próprios disponíveis.</p>
-        </div>
-      </div>
-
-      <!-- ── PASSO 4 ── -->
-      <div class="step" id="step4">
-        <p class="step-eyebrow">Passo 4 de 5</p>
-        <h2 class="step-title">Em quanto tempo quer concretizar?</h2>
-        <p class="step-subtitle">O prazo influencia diretamente a estratégia mais adequada para si.</p>
-
-        <div class="field-group">
-          <label class="field-label field-required" id="lbl-prazo">Prazo para concretizar</label>
-          <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-prazo">
-            <div class="opt" data-field="prazo" data-val="O mais rápido possível" role="radio" aria-checked="false" tabindex="0">O mais rápido possível</div>
-            <div class="opt" data-field="prazo" data-val="&lt;3 meses" role="radio" aria-checked="false" tabindex="0">Menos de 3 meses</div>
-            <div class="opt" data-field="prazo" data-val="3–6 meses" role="radio" aria-checked="false" tabindex="0">3 a 6 meses</div>
-            <div class="opt" data-field="prazo" data-val="&gt;6 meses" role="radio" aria-checked="false" tabindex="0">Mais de 6 meses</div>
-          </div>
-          <p class="errmsg" id="err-prazo">Selecione o prazo pretendido.</p>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label field-required" id="lbl-motivo">Principal motivo da troca</label>
-          <div class="opts opts-2" role="radiogroup" aria-labelledby="lbl-motivo">
-            <div class="opt" data-field="motivo" data-val="Família/espaço" role="radio" aria-checked="false" tabindex="0">Família / espaço</div>
-            <div class="opt" data-field="motivo" data-val="Mudança de zona" role="radio" aria-checked="false" tabindex="0">Mudança de zona</div>
-            <div class="opt" data-field="motivo" data-val="Upgrade qualidade de vida" role="radio" aria-checked="false" tabindex="0">Upgrade de qualidade de vida</div>
-            <div class="opt" data-field="motivo" data-val="Razões financeiras" role="radio" aria-checked="false" tabindex="0">Razões financeiras</div>
-            <div class="opt" data-field="motivo" data-val="Outro" role="radio" aria-checked="false" tabindex="0">Outro motivo</div>
-          </div>
-          <p class="errmsg" id="err-motivo">Selecione o principal motivo.</p>
-        </div>
-      </div>
-
-      <!-- ── PASSO 5 ── -->
-      <div class="step" id="step5">
-        <p class="step-eyebrow">Passo 5 de 5</p>
-        <h2 class="step-title">Quase lá!</h2>
-        <p class="step-subtitle">Deixe os seus dados e receba o seu resultado personalizado.</p>
-
-        <div class="field-group">
-          <label class="field-label field-required" for="inp-nome">Nome completo</label>
-          <input type="text" id="inp-nome" class="finput" placeholder="O seu nome completo" autocomplete="name">
-          <p class="errmsg" id="err-nome">Introduza o seu nome completo.</p>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label field-required" for="inp-tel">Telemóvel</label>
-          <input type="tel" id="inp-tel" class="finput" placeholder="912 345 678" autocomplete="tel">
-          <p class="errmsg" id="err-tel">Introduza um número de telemóvel válido (mínimo 9 dígitos).</p>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label field-required" for="inp-email">E-mail</label>
-          <input type="email" id="inp-email" class="finput" placeholder="o.seu@email.com" autocomplete="email">
-          <p class="errmsg" id="err-email">Introduza um endereço de e-mail válido.</p>
-        </div>
-
-        <p class="gdpr-note">
-          Os seus dados são tratados de forma confidencial e utilizados exclusivamente para o contacto solicitado, em conformidade com o RGPD. Não partilhamos as suas informações com terceiros.
-        </p>
-      </div>
-
-      </div><!-- /quiz-card -->
-
-      <!-- Navegação abaixo do card, com leve espaçamento -->
-      <nav class="quiz-nav" aria-label="Navegação do simulador">
-        <div class="quiz-nav-inner">
-          <button class="btn-back" id="btnBack" onclick="voltarPasso()" style="display:none" aria-label="Voltar ao passo anterior">← Voltar</button>
-          <button class="btn-next" id="btnNext" onclick="avancarPasso()">Continuar →</button>
-        </div>
-      </nav>
-
-    </div><!-- /quiz-body -->
-
-  </div><!-- /quiz-container -->
-
-  <!-- Overlay de envio -->
-  <div class="overlay" id="overlay" role="status" aria-live="assertive" aria-label="A calcular resultado">
-    <div class="spinner" aria-hidden="true"></div>
-    <p class="overlay-text">A calcular o seu resultado…</p>
   </div>
+</header>
 
-  <!-- ══════════════════════════════════════════
-       JAVASCRIPT
-  ══════════════════════════════════════════ -->
-  <script>
-    // ═══════════════════════════════════════════
-    // CONSTANTES DE CONFIGURAÇÃO
-    // ═══════════════════════════════════════════
-    var PIXEL_ID      = '1676725573619027';
-    var WEBHOOK_URL   = 'https://services.leadconnectorhq.com/hooks/zwFtD3VmomvcSlSPNR3S/webhook-trigger/hf3y6E6zvta2FKz2QI5X';
-    var NOME_ORIGEM   = 'NOME_ORIGEM_AQUI';
-    var MARCA         = 'G4 REMAX';
-    var CHAVE_SS      = 'sim_g4remax';
-    var PREFIXO_PAIS  = '351';
-    var TOTAL_STEPS   = 5;
+<!-- ══════ SEGUNDA DOBRA — SIMULADOR ══════ -->
+<main class="quiz-wrap">
+  <section class="quiz" id="quiz" aria-label="Diagnóstico de venda">
+    <div class="barra" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" aria-label="Progresso do diagnóstico"><i id="barra"></i></div>
+    <div class="contador" id="contador">Passo 1 de 5</div>
+    <form id="form" novalidate>
+      <div id="passos"></div>
+      <div class="navs">
+        <button type="button" class="btn-sec" id="btnVoltar" style="display:none">Voltar</button>
+        <button type="button" class="btn-prim" id="btnAvancar">Continuar</button>
+      </div>
+      <p class="nota-passo" id="notaPasso">Todas as respostas são obrigatórias. Levamos cerca de 3 minutos.</p>
+    </form>
+  </section>
+</main>
 
-    // ═══════════════════════════════════════════
-    // ESTADO
-    // ═══════════════════════════════════════════
-    var currentStep = 1;
-    var A = {
-      procura_tipo: '',
-      procura_tipologia: '',
-      procura_localizacao: '',
-      venda_tipo: '',
-      venda_tipologia: '',
-      venda_estado: '',
-      venda_zona: '',
-      tem_credito: '',
-      capital_divida: '',
-      capitais_proprios: '',
-      prazo: '',
-      motivo: '',
-      nome: '',
-      tel: '',
-      email: ''
-    };
+<footer>
+  <strong>Grupo G4 Remax</strong>
+  Os seus dados são tratados com confidencialidade ao abrigo do RGPD.
+</footer>
 
-    // ═══════════════════════════════════════════
-    // INICIAR QUIZ
-    // ═══════════════════════════════════════════
-    function iniciarQuiz() {
-      document.getElementById('hero').style.display = 'none';
-      document.getElementById('quizContainer').style.display = 'block';
-      atualizarUI();
-    }
+<!-- ══════ BANNER DE CONSENTIMENTO ══════ -->
+<div class="cookies" id="cookies" role="dialog" aria-live="polite" aria-label="Consentimento de cookies">
+  <div class="cookies-in">
+    <p>Usamos cookies de medição para perceber o desempenho dos nossos anúncios. Pode recusar — o diagnóstico funciona na mesma.</p>
+    <div class="cookies-btns">
+      <button type="button" class="c-recusar" id="cRecusar">Recusar</button>
+      <button type="button" class="c-aceitar" id="cAceitar">Aceitar</button>
+    </div>
+  </div>
+</div>
 
-    // ═══════════════════════════════════════════
-    // OPÇÕES — click e teclado
-    // ═══════════════════════════════════════════
-    document.querySelectorAll('.opt').forEach(function(card) {
-      card.addEventListener('click', function() { selecionarOpt(card); });
-      card.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          selecionarOpt(card);
-        }
+<script>
+/* ═══════════════ CONSENTIMENTO ═══════════════ */
+(function(){
+  var el = document.getElementById('cookies');
+  if(!temConsentimento() && !recusouConsentimento()) el.classList.add('on');
+  function guarda(v){ try{ localStorage.setItem(CHAVE_CONSENTIMENTO, v); }catch(e){} el.classList.remove('on'); }
+  document.getElementById('cAceitar').onclick = function(){ guarda('aceite'); carregarPixel(); };
+  document.getElementById('cRecusar').onclick = function(){ guarda('recusado'); };
+})();
+
+/* ═══════════════ ESTRUTURA DO QUIZ ═══════════════ */
+var A = {};            // respostas
+var passoAtual = 0;
+var aEnviar = false;
+
+var PASSOS = [
+{ titulo:'Comecemos pelo imóvel', campos:[
+  {id:'imovel_tipo', label:'Que tipo de imóvel quer vender?', tipo:'opcoes', cols:2,
+   opcoes:['Apartamento','Moradia','Terreno','Outro']},
+  {id:'imovel_tipologia', label:'Tipologia', tipo:'opcoes', cols:4,
+   opcoes:['T0/T1','T2','T3','T4+'],
+   cond:function(){ return A.imovel_tipo !== 'Terreno'; }},
+  {id:'imovel_area', label:'Área aproximada', ajuda:'Em metros quadrados.', tipo:'numero',
+   ph:'Ex: 110', min:10, max:5000},
+  {id:'imovel_localizacao', label:'Onde fica o imóvel?', ajuda:'Concelho e freguesia.', tipo:'texto',
+   ph:'Ex: Sintra, Algueirão'},
+  {id:'imovel_ano', label:'Ano de construção', tipo:'select',
+   opcoes:['Antes de 1980','1980–2000','2001–2015','Depois de 2015','Não sei ao certo']}
+]},
+{ titulo:'Quem é o dono e o que já tem em mãos', campos:[
+  {id:'titularidade', label:'Quem é o proprietário do imóvel?', tipo:'opcoes', cols:1,
+   opcoes:['Só eu','Eu e o meu cônjuge','É uma herança ou partilha','Vários proprietários']},
+  {id:'acordo_venda', label:'Estão todos de acordo em vender?', tipo:'opcoes', cols:1,
+   opcoes:['Sim, está tudo acordado','Ainda não há acordo entre todos','Não sei / ainda não falámos'],
+   cond:function(){ return !!A.titularidade && A.titularidade !== 'Só eu'; }},
+  {id:'documentos_que_tem', label:'Que documentos já tem?', ajuda:'Pode escolher vários.', tipo:'chips',
+   opcoes:['Caderneta predial','Certidão permanente do registo','Licença de utilização','Certificado energético','Nenhum destes / não sei'],
+   exclusiva:'Nenhum destes / não sei'},
+  {id:'encargos', label:'O imóvel tem algum encargo?', tipo:'opcoes', cols:1,
+   opcoes:['Não, está livre','Hipoteca — tenho crédito','Penhora ou processo judicial','Usufruto','Não sei']}
+]},
+{ titulo:'O preço — e de onde vem esse número', campos:[
+  {id:'valor_pretendido', label:'Que valor pretende pelo imóvel?', tipo:'select',
+   opcoes:['Até 150.000 €','150.000 € – 250.000 €','250.000 € – 400.000 €','400.000 € – 600.000 €','Mais de 600.000 €','Ainda não defini']},
+  {id:'origem_do_valor', label:'Como chegou a esse valor?', tipo:'opcoes', cols:1,
+   opcoes:['Fiz uma avaliação profissional','Vi anúncios de casas parecidas','É o valor de que preciso para os meus planos','Sinceramente, não faço ideia']},
+  {id:'capital_em_divida', label:'Tem capital em dívida ao banco?', tipo:'select',
+   opcoes:['Não tenho crédito — está pago','Menos de 50.000 €','50.000 € – 100.000 €','100.000 € – 200.000 €','Mais de 200.000 €','Não sei']},
+  {id:'flexibilidade_preco', label:'Tem margem de negociação?', tipo:'opcoes', cols:1,
+   opcoes:['Sim, tenho alguma margem','Pouca — só para fechar negócio','Nenhuma, é este valor']}
+]},
+{ titulo:'O seu contexto', campos:[
+  {id:'motivo_venda', label:'Porque está a vender?', tipo:'opcoes', cols:1,
+   opcoes:['Vou mudar de casa','Recebi uma herança','Quero rentabilizar o investimento','Mudança de vida (trabalho, separação, família)','Vou emigrar','Outro']},
+  {id:'prazo_venda', label:'Em quanto tempo quer vender?', tipo:'opcoes', cols:1,
+   opcoes:['O mais rápido possível','Até 3 meses','3 a 6 meses','Mais de 6 meses','Estou só a explorar a ideia']},
+  {id:'ocupacao', label:'Como está o imóvel neste momento?', tipo:'opcoes', cols:1,
+   opcoes:['Vivo lá','Está vazio','Está arrendado a inquilinos','Uso ocasional']},
+  {id:'ja_no_mercado', label:'O imóvel já está à venda?', tipo:'opcoes', cols:1,
+   opcoes:['Não, ainda não','Sim, com agência em exclusivo','Sim, com agência sem exclusivo','Sim, por minha conta']},
+  {id:'tempo_no_mercado', label:'Há quanto tempo está no mercado?', tipo:'select',
+   opcoes:['Menos de 1 mês','1 a 3 meses','3 a 6 meses','Mais de 6 meses'],
+   cond:function(){ return !!A.ja_no_mercado && A.ja_no_mercado !== 'Não, ainda não'; }}
+]},
+{ titulo:'Para onde enviamos o diagnóstico', campos:[
+  {id:'nome', label:'Nome completo', tipo:'texto', ph:'Nome e apelido'},
+  {id:'tel', label:'Telemóvel', tipo:'tel', ph:'912 345 678'},
+  {id:'email', label:'E-mail', tipo:'email', ph:'o.seu@email.pt'},
+  {id:'quer_avaliacao', label:'Quer marcar uma avaliação gratuita do imóvel?', tipo:'opcoes', cols:1,
+   opcoes:['Sim, quero marcar','Talvez — primeiro quero saber mais','Não, só queria o diagnóstico']},
+  {id:'consentimento', tipo:'consentimento',
+   texto:'Autorizo o Grupo G4 Remax a contactar-me sobre o meu diagnóstico.'}
+]}
+];
+
+/* ═══════════════ RENDER ═══════════════ */
+var cont = document.getElementById('passos');
+
+PASSOS.forEach(function(p, i){
+  var sec = document.createElement('section');
+  sec.className = 'passo' + (i===0 ? ' ativo' : '');
+  sec.dataset.passo = i;
+  var h = document.createElement('h2');
+  h.textContent = p.titulo;
+  sec.appendChild(h);
+
+  p.campos.forEach(function(c){
+    var wrap = document.createElement('div');
+    wrap.className = 'campo';
+    wrap.dataset.campo = c.id;
+
+    if(c.tipo === 'consentimento'){
+      var lab = document.createElement('label');
+      lab.className = 'consent-check';
+      lab.innerHTML = '<input type="checkbox" id="consentimento"><span>' + c.texto + '</span>';
+      wrap.appendChild(lab);
+      lab.querySelector('input').addEventListener('change', function(){
+        A.consentimento = this.checked ? 'Sim' : '';
+        wrap.classList.remove('erro');
       });
-    });
+    } else {
+      var idRot = 'rot_' + c.id;
+      var rot = document.createElement(c.tipo==='opcoes'||c.tipo==='chips' ? 'span' : 'label');
+      rot.className = 'rotulo';
+      rot.id = idRot;
+      if(c.tipo!=='opcoes' && c.tipo!=='chips') rot.setAttribute('for', c.id);
+      rot.innerHTML = c.label + (c.ajuda ? '<span class="ajuda">'+c.ajuda+'</span>' : '');
+      wrap.appendChild(rot);
 
-    function selecionarOpt(card) {
-      var field = card.dataset.field;
-      var val   = card.dataset.val;
-
-      document.querySelectorAll('.opt[data-field="' + field + '"]').forEach(function(c) {
-        c.classList.remove('sel', 'err');
-        c.setAttribute('aria-checked', 'false');
-      });
-      card.classList.add('sel');
-      card.setAttribute('aria-checked', 'true');
-      A[field] = val;
-
-      // Efeitos secundários
-      if (field === 'venda_tipo')    atualizarCamposVenda();
-      if (field === 'tem_credito')   atualizarCamposCredito();
-    }
-
-    // ═══════════════════════════════════════════
-    // CAMPOS CONDICIONAIS
-    // ═══════════════════════════════════════════
-    function atualizarCamposVenda() {
-      var tipo = A.venda_tipo;
-      var temVenda = (tipo !== '' && tipo !== 'Não preciso de vender');
-      var temTipologia = (temVenda && tipo !== 'Terreno');
-
-      setVisible('cond-v-tip',   temTipologia);
-      setVisible('cond-v-extra', temVenda);
-
-      if (!temTipologia) {
-        A.venda_tipologia = '';
-        document.querySelectorAll('.opt[data-field="venda_tipologia"]').forEach(function(c) {
-          c.classList.remove('sel'); c.setAttribute('aria-checked','false');
+      if(c.tipo === 'opcoes'){
+        var g = document.createElement('div');
+        g.className = 'grelha c' + (c.cols||1);
+        g.setAttribute('role','group');
+        g.setAttribute('aria-labelledby', idRot);
+        c.opcoes.forEach(function(o){
+          var b = document.createElement('button');
+          b.type='button'; b.className='op'; b.textContent=o;
+          b.setAttribute('aria-pressed','false');
+          b.onclick = function(){
+            A[c.id] = o;
+            g.querySelectorAll('.op').forEach(function(x){ x.classList.remove('sel'); x.setAttribute('aria-pressed','false'); });
+            b.classList.add('sel'); b.setAttribute('aria-pressed','true');
+            wrap.classList.remove('erro');
+            atualizarCondicionais();
+          };
+          g.appendChild(b);
         });
-      }
-      if (!temVenda) {
-        A.venda_estado = ''; A.venda_zona = '';
-        document.getElementById('sel-estado').value = '';
-        document.getElementById('inp-zona').value = '';
-      }
-    }
+        wrap.appendChild(g);
 
-    function atualizarCamposCredito() {
-      var mostra = (A.tem_credito === 'Sim');
-      setVisible('cond-divida', mostra);
-      if (!mostra) {
-        A.capital_divida = '';
-        document.getElementById('sel-divida').value = '';
-      }
-    }
-
-    function setVisible(id, show) {
-      var el = document.getElementById(id);
-      if (show) el.classList.add('on'); else el.classList.remove('on');
-    }
-
-    // ═══════════════════════════════════════════
-    // SINCRONIZAR INPUTS DE TEXTO
-    // ═══════════════════════════════════════════
-    function sincronizarInputs() {
-      A.procura_localizacao = document.getElementById('inp-localizacao').value.trim();
-      A.venda_estado        = document.getElementById('sel-estado').value;
-      A.venda_zona          = document.getElementById('inp-zona').value.trim();
-      A.capital_divida      = document.getElementById('sel-divida').value;
-      A.nome                = document.getElementById('inp-nome').value.trim();
-      A.tel                 = document.getElementById('inp-tel').value.trim();
-      A.email               = document.getElementById('inp-email').value.trim();
-    }
-
-    // Sync em tempo real nos inputs de texto
-    ['inp-localizacao','inp-zona','inp-nome','inp-tel','inp-email'].forEach(function(id) {
-      document.getElementById(id).addEventListener('input', sincronizarInputs);
-    });
-    ['sel-estado','sel-divida'].forEach(function(id) {
-      document.getElementById(id).addEventListener('change', sincronizarInputs);
-    });
-
-    // ═══════════════════════════════════════════
-    // NAVEGAÇÃO
-    // ═══════════════════════════════════════════
-    function avancarPasso() {
-      sincronizarInputs();
-      if (!validarPasso(currentStep)) return;
-
-      if (currentStep === TOTAL_STEPS) {
-        finalizar();
-        return;
-      }
-      currentStep++;
-      atualizarUI();
-    }
-
-    function voltarPasso() {
-      if (currentStep <= 1) return;
-      currentStep--;
-      atualizarUI();
-    }
-
-    function atualizarUI() {
-      document.querySelectorAll('.step').forEach(function(s, i) {
-        s.classList.toggle('active', i + 1 === currentStep);
-      });
-
-      var pct = Math.round((currentStep / TOTAL_STEPS) * 100);
-      var pb  = document.getElementById('progressBar');
-      pb.style.width = pct + '%';
-      pb.parentElement.setAttribute('aria-valuenow', pct);
-      document.getElementById('stepLabel').textContent = 'Passo ' + currentStep + ' de ' + TOTAL_STEPS;
-
-      var btnBack = document.getElementById('btnBack');
-      var btnNext = document.getElementById('btnNext');
-      btnBack.style.display = currentStep > 1 ? 'block' : 'none';
-      btnNext.textContent   = currentStep === TOTAL_STEPS ? 'Ver resultado →' : 'Continuar →';
-      btnNext.disabled      = false;
-
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // ═══════════════════════════════════════════
-    // VALIDAÇÃO
-    // ═══════════════════════════════════════════
-    function validarPasso(passo) {
-      var ok = true;
-
-      function erroOpts(field, errId) {
-        var els = document.querySelectorAll('.opt[data-field="' + field + '"]');
-        if (!A[field]) {
-          els.forEach(function(c) { c.classList.add('err'); });
-          mostrarErr(errId); ok = false;
-        } else {
-          els.forEach(function(c) { c.classList.remove('err'); });
-          esconderErr(errId);
-        }
-      }
-
-      function erroInput(inputId, errId, testFn) {
-        var el  = document.getElementById(inputId);
-        var val = el.value.trim();
-        var valido = testFn ? testFn(val) : val.length > 0;
-        if (!valido) {
-          el.classList.add('err'); mostrarErr(errId); ok = false;
-        } else {
-          el.classList.remove('err'); esconderErr(errId);
-        }
-      }
-
-      function erroSelect(selId, errId) {
-        var el = document.getElementById(selId);
-        if (!el.value) {
-          el.classList.add('err'); mostrarErr(errId); ok = false;
-        } else {
-          el.classList.remove('err'); esconderErr(errId);
-        }
-      }
-
-      if (passo === 1) {
-        erroOpts('procura_tipo',      'err-p-tipo');
-        erroOpts('procura_tipologia', 'err-p-tip');
-        erroInput('inp-localizacao',  'err-localizacao');
-      }
-
-      if (passo === 2) {
-        erroOpts('venda_tipo', 'err-v-tipo');
-        var temVenda = A.venda_tipo && A.venda_tipo !== 'Não preciso de vender';
-        var temTip   = temVenda && A.venda_tipo !== 'Terreno';
-        if (temTip)   erroOpts('venda_tipologia', 'err-v-tip');
-        if (temVenda) {
-          erroSelect('sel-estado', 'err-v-estado');
-          erroInput('inp-zona',    'err-v-zona');
-        }
-      }
-
-      if (passo === 3) {
-        erroOpts('tem_credito', 'err-credito');
-        if (A.tem_credito === 'Sim') erroSelect('sel-divida', 'err-divida');
-        erroOpts('capitais_proprios', 'err-capitais');
-      }
-
-      if (passo === 4) {
-        erroOpts('prazo',  'err-prazo');
-        erroOpts('motivo', 'err-motivo');
-      }
-
-      if (passo === 5) {
-        erroInput('inp-nome',  'err-nome',  function(v) { return v.length >= 2; });
-        erroInput('inp-tel',   'err-tel',   function(v) { return v.replace(/\D/g,'').length >= 9; });
-        erroInput('inp-email', 'err-email', function(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); });
-      }
-
-      if (!ok) {
-        var firstErr = document.querySelector('#step' + passo + ' .err');
-        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      return ok;
-    }
-
-    function mostrarErr(id)  { var e = document.getElementById(id); if(e) e.classList.add('show'); }
-    function esconderErr(id) { var e = document.getElementById(id); if(e) e.classList.remove('show'); }
-
-    // ═══════════════════════════════════════════
-    // SCORE
-    // ═══════════════════════════════════════════
-    function calcularScore() {
-      var s = 5;
-
-      // Capitais próprios
-      if      (A.capitais_proprios === 'Nenhum') s -= 1;
-      else if (A.capitais_proprios === '20–60k') s += 1;
-      else if (A.capitais_proprios === '+60k')   s += 2;
-
-      // Sem crédito
-      if (A.tem_credito === 'Não') s += 1;
-
-      // Prazo
-      if      (A.prazo === 'O mais rápido possível') s -= 1;
-      else if (A.prazo === '3–6 meses')              s += 1;
-      else if (A.prazo === '>6 meses')               s += 1;
-
-      // Não precisa de vender
-      if (A.venda_tipo === 'Não preciso de vender') s += 1;
-
-      // Tipo procurado = tipo a vender
-      if (
-        A.procura_tipo === A.venda_tipo &&
-        A.venda_tipo !== 'Não preciso de vender' &&
-        A.venda_tipo !== 'Terreno' &&
-        A.venda_tipo !== ''
-      ) s += 0.5;
-
-      // Capital em dívida > 200k
-      if (A.capital_divida === '>200k') s -= 1;
-
-      return Math.max(0, Math.min(10, s));
-    }
-
-    // ═══════════════════════════════════════════
-    // NORMALIZAR TELEMÓVEL → E.164
-    // ═══════════════════════════════════════════
-    function normalizarTel(v) {
-      var d = (v || '').replace(/\D/g, '');
-      if (!d) return '';
-      if (d.indexOf('00') === 0) d = d.slice(2);  // 00351… → 351…
-      if (d.length === 9) d = PREFIXO_PAIS + d;   // nº local sem indicativo
-      return '+' + d;                              // E.164
-    }
-
-    // ═══════════════════════════════════════════
-    // ENVIAR WEBHOOK → GoHighLevel
-    // ═══════════════════════════════════════════
-    function enviarWebhook(tel, first, last, score, eventId) {
-      var lblPrazo = {
-        'O mais rápido possível': 'O mais rápido possível',
-        '<3 meses':  'Menos de 3 meses',
-        '3–6 meses': '3 a 6 meses',
-        '>6 meses':  'Mais de 6 meses'
-      };
-      var lblCapitais = {
-        'Nenhum':  'Nenhum',
-        'até 20k': 'Até 20 000 €',
-        '20–60k':  '20 000 € – 60 000 €',
-        '+60k':    'Mais de 60 000 €'
-      };
-      var lblDivida = {
-        '<50k':    'Menos de 50 000 €',
-        '50–100k': '50 000 € – 100 000 €',
-        '100–200k':'100 000 € – 200 000 €',
-        '>200k':   'Mais de 200 000 €'
-      };
-
-      var payload = {
-        // ── Chaves padrão GHL ──
-        name:       A.nome,
-        first_name: first,
-        last_name:  last,
-        phone:      tel,
-        email:      A.email,
-
-        // ── Metadados ──
-        timestamp:        new Date().toISOString(),
-        origem:           NOME_ORIGEM,
-        pagina_url:       window.location.href,
-        event_id:         eventId,
-        score_viabilidade: Number(score.toFixed(1)),
-
-        // ── Respostas com rótulos legíveis ──
-        procura_tipo:       A.procura_tipo,
-        procura_tipologia:  A.procura_tipologia,
-        procura_localizacao:A.procura_localizacao,
-        venda_tipo:         A.venda_tipo,
-        venda_tipologia:    A.venda_tipologia  || 'N/A',
-        venda_estado:       A.venda_estado     || 'N/A',
-        venda_zona:         A.venda_zona       || 'N/A',
-        tem_credito:        A.tem_credito,
-        capital_divida:     A.tem_credito === 'Sim' ? (lblDivida[A.capital_divida] || A.capital_divida) : 'N/A',
-        capitais_proprios:  lblCapitais[A.capitais_proprios] || A.capitais_proprios,
-        prazo:              lblPrazo[A.prazo] || A.prazo,
-        motivo:             A.motivo,
-
-        // ── Cópia bruta para depuração ──
-        raw: JSON.parse(JSON.stringify(A))
-      };
-
-      fetch(WEBHOOK_URL, {
-        method: 'POST',
-        keepalive: true,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      }).catch(function() {}); // falha silenciosa — o redirect acontece independentemente
-    }
-
-    // ═══════════════════════════════════════════
-    // FINALIZAR — ORDEM EXATA CONFORME BLOCO 3
-    // ═══════════════════════════════════════════
-    function finalizar() {
-      // Desativa botão para evitar duplo clique
-      var btnNext = document.getElementById('btnNext');
-      btnNext.disabled = true;
-
-      // Mostra overlay de envio
-      document.getElementById('overlay').classList.add('show');
-
-      var score   = calcularScore();
-      var tel     = normalizarTel(A.tel);
-      var partes  = (A.nome || '').trim().split(/\s+/);
-      var first   = partes[0] || '';
-      var last    = partes.slice(1).join(' ') || '';
-      var eventId = 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-
-      // 1) GUARDA OS DADOS PRIMEIRO — para a página de resultado os ler
-      try {
-        sessionStorage.setItem(CHAVE_SS, JSON.stringify({ A: A, score: score }));
-      } catch(e) {}
-
-      // 2) ADVANCED MATCHING antes do evento — melhora a qualidade de correspondência
-      if (typeof fbq === 'function') {
-        fbq('init', PIXEL_ID, {
-          em: A.email,
-          ph: tel,
-          fn: first,
-          ln: last
+      } else if(c.tipo === 'chips'){
+        A[c.id] = [];
+        var box = document.createElement('div');
+        box.className='chips'; box.setAttribute('role','group'); box.setAttribute('aria-labelledby', idRot);
+        c.opcoes.forEach(function(o){
+          var b = document.createElement('button');
+          b.type='button'; b.className='chip'; b.textContent=o;
+          b.setAttribute('aria-pressed','false');
+          b.onclick = function(){
+            var lista = A[c.id] || [];
+            var dentro = lista.indexOf(o) > -1;
+            if(o === c.exclusiva){
+              lista = dentro ? [] : [o];
+            } else {
+              lista = lista.filter(function(x){ return x !== c.exclusiva; });
+              if(dentro) lista = lista.filter(function(x){ return x !== o; });
+              else lista.push(o);
+            }
+            A[c.id] = lista;
+            box.querySelectorAll('.chip').forEach(function(x){
+              var on = lista.indexOf(x.textContent) > -1;
+              x.classList.toggle('sel', on);
+              x.setAttribute('aria-pressed', on ? 'true':'false');
+            });
+            wrap.classList.remove('erro');
+          };
+          box.appendChild(b);
         });
+        wrap.appendChild(box);
+
+      } else if(c.tipo === 'select'){
+        var s = document.createElement('select');
+        s.id = c.id;
+        s.innerHTML = '<option value="">Selecione uma opção</option>' +
+          c.opcoes.map(function(o){ return '<option>'+o+'</option>'; }).join('');
+        s.onchange = function(){ A[c.id] = s.value; wrap.classList.remove('erro'); atualizarCondicionais(); };
+        wrap.appendChild(s);
+
+      } else {
+        var tipos = {texto:'text', numero:'number', tel:'tel', email:'email'};
+        var inp = document.createElement('input');
+        inp.type = tipos[c.tipo]; inp.id = c.id; inp.placeholder = c.ph || '';
+        if(c.tipo==='numero'){ inp.min=c.min; inp.max=c.max; inp.inputMode='numeric'; }
+        if(c.tipo==='tel'){ inp.inputMode='tel'; inp.autocomplete='tel'; }
+        if(c.tipo==='email'){ inp.autocomplete='email'; }
+        if(c.id==='nome'){ inp.autocomplete='name'; }
+        inp.oninput = function(){ A[c.id] = inp.value; wrap.classList.remove('erro'); };
+        wrap.appendChild(inp);
       }
-
-      // 3) DISPARA O LEAD UMA VEZ com eventID (dedup futura com a CAPI)
-      //    NÃO fazer window.location aqui — isso cancelaria o beacon do pixel
-      if (typeof fbq === 'function') {
-        fbq('track', 'Lead', {
-          content_name:     NOME_ORIGEM,
-          content_category: MARCA,
-          value:            Number(score.toFixed(1)),
-          currency:         'EUR'
-        }, { eventID: eventId });
-      }
-
-      // 4) ENVIA O LEAD → GHL (keepalive: true sobrevive ao redirect)
-      enviarWebhook(tel, first, last, score, eventId);
-
-      // 5) SÓ REDIRECIONA DEPOIS de dar tempo ao beacon do pixel para sair.
-      //    Sem este atraso, o window.location CANCELA o pedido do Meta.
-      var jaFoi = false;
-      var ir = function() {
-        if (jaFoi) return;
-        jaFoi = true;
-        window.location.href = 'resultado.html';
-      };
-      setTimeout(ir, 800); // ≈800 ms para o beacon sair
     }
-  </script>
 
+    var err = document.createElement('div');
+    err.className='msg-erro';
+    err.textContent = 'Preencha este campo para continuar.';
+    wrap.appendChild(err);
+    sec.appendChild(wrap);
+  });
+
+  cont.appendChild(sec);
+});
+
+function campoEl(id){ return cont.querySelector('[data-campo="'+id+'"]'); }
+
+function atualizarCondicionais(){
+  PASSOS.forEach(function(p){
+    p.campos.forEach(function(c){
+      if(!c.cond) return;
+      var el = campoEl(c.id);
+      var mostrar = c.cond();
+      el.style.display = mostrar ? '' : 'none';
+      if(!mostrar){
+        delete A[c.id];
+        el.classList.remove('erro');
+        el.querySelectorAll('.op,.chip').forEach(function(x){ x.classList.remove('sel'); x.setAttribute('aria-pressed','false'); });
+        var s = el.querySelector('select'); if(s) s.value='';
+      }
+    });
+  });
+}
+atualizarCondicionais();
+
+/* ═══════════════ NAVEGAÇÃO E VALIDAÇÃO ═══════════════ */
+var barra = document.getElementById('barra');
+var contador = document.getElementById('contador');
+var btnVoltar = document.getElementById('btnVoltar');
+var btn = document.getElementById('btnAvancar');
+var progressbar = document.querySelector('[role="progressbar"]');
+
+function mostrarPasso(i, comScroll){
+  passoAtual = i;
+  cont.querySelectorAll('.passo').forEach(function(s, k){ s.classList.toggle('ativo', k===i); });
+  barra.style.width = ((i+1)/PASSOS.length*100) + '%';
+  contador.textContent = 'Passo ' + (i+1) + ' de ' + PASSOS.length;
+  progressbar.setAttribute('aria-valuenow', i+1);
+  btnVoltar.style.display = i===0 ? 'none' : 'block';
+  btn.textContent = i===PASSOS.length-1 ? 'Ver o meu diagnóstico' : 'Continuar';
+  if(comScroll) document.getElementById('quiz').scrollIntoView({behavior:'smooth', block:'start'});
+}
+mostrarPasso(0, false);
+
+var reEmail = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+
+function validarPasso(i){
+  var ok = true, primeiro = null;
+  PASSOS[i].campos.forEach(function(c){
+    var el = campoEl(c.id);
+    if(el.style.display === 'none') return;
+    var v = A[c.id], mau = false, msg = 'Preencha este campo para continuar.';
+
+    if(c.tipo === 'chips'){
+      mau = !v || !v.length; msg = 'Escolha pelo menos uma opção.';
+    } else if(c.tipo === 'consentimento'){
+      mau = v !== 'Sim'; msg = 'Precisamos da sua autorização para lhe enviar o diagnóstico.';
+    } else if(c.tipo === 'numero'){
+      var n = parseFloat(v);
+      mau = !v || isNaN(n) || n < c.min || n > c.max;
+      msg = 'Indique uma área entre ' + c.min + ' e ' + c.max + ' m².';
+    } else if(c.id === 'nome'){
+      var nome = (v||'').trim();
+      mau = nome.length < 3 || nome.indexOf(' ') === -1;
+      msg = 'Escreva o nome completo (nome e apelido).';
+    } else if(c.id === 'tel'){
+      mau = ((v||'').replace(/\D/g,'')).length < 9;
+      msg = 'Indique um telemóvel válido com pelo menos 9 dígitos.';
+    } else if(c.id === 'email'){
+      mau = !reEmail.test((v||'').trim());
+      msg = 'Verifique o e-mail — parece estar incompleto.';
+    } else {
+      mau = !v;
+      msg = (c.tipo==='opcoes') ? 'Escolha uma opção para continuar.' : msg;
+    }
+
+    el.classList.toggle('erro', mau);
+    if(mau){
+      el.querySelector('.msg-erro').textContent = msg;
+      ok = false;
+      if(!primeiro) primeiro = el;
+    }
+  });
+  if(primeiro) primeiro.scrollIntoView({behavior:'smooth', block:'center'});
+  return ok;
+}
+
+document.getElementById('btnComecar').onclick = function(){
+  document.getElementById('quiz').scrollIntoView({behavior:'smooth', block:'start'});
+};
+btnVoltar.onclick = function(){ if(passoAtual>0) mostrarPasso(passoAtual-1, true); };
+btn.onclick = function(){
+  if(!validarPasso(passoAtual)) return;
+  if(passoAtual < PASSOS.length-1){ mostrarPasso(passoAtual+1, true); }
+  else { finalizar(); }
+};
+
+/* ═══════════════ MOTOR DE DIAGNÓSTICO ═══════════════ */
+var DOCS = ['Caderneta predial','Certidão permanente do registo','Licença de utilização','Certificado energético'];
+
+function diagnosticar(){
+  var tem = A.documentos_que_tem || [];
+  var falta = DOCS.filter(function(d){ return tem.indexOf(d) === -1; });
+
+  /* ── EIXO 1 · DOCUMENTAÇÃO ── */
+  var doc = 100;
+  if(falta.indexOf('Caderneta predial')>-1) doc -= 10;
+  if(falta.indexOf('Certidão permanente do registo')>-1) doc -= 10;
+  if(falta.indexOf('Licença de utilização')>-1) doc -= 15;
+  if(falta.indexOf('Certificado energético')>-1) doc -= 25;
+  if(A.encargos === 'Hipoteca — tenho crédito') doc -= 5;
+  if(A.encargos === 'Penhora ou processo judicial') doc -= 30;
+  if(A.encargos === 'Usufruto') doc -= 20;
+  if(A.encargos === 'Não sei') doc -= 10;
+  if(A.titularidade === 'É uma herança ou partilha') doc -= 15;
+  if(A.titularidade === 'Vários proprietários') doc -= 10;
+  if(A.acordo_venda === 'Ainda não há acordo entre todos') doc -= 20;
+  if(A.acordo_venda === 'Não sei / ainda não falámos') doc -= 15;
+  doc = Math.max(0, Math.min(100, doc));
+
+  /* ── EIXO 2 · PREÇO vs MERCADO ── */
+  var preco;
+  switch(A.origem_do_valor){
+    case 'Fiz uma avaliação profissional': preco = 90; break;
+    case 'Vi anúncios de casas parecidas': preco = 68; break;
+    case 'É o valor de que preciso para os meus planos': preco = 32; break;
+    default: preco = 45;
+  }
+  if(A.flexibilidade_preco === 'Sim, tenho alguma margem') preco += 10;
+  if(A.flexibilidade_preco === 'Nenhuma, é este valor') preco -= 15;
+  if(A.valor_pretendido === 'Ainda não defini') preco -= 8;
+  if(A.tempo_no_mercado === '3 a 6 meses') preco -= 12;
+  if(A.tempo_no_mercado === 'Mais de 6 meses') preco -= 22;
+  preco = Math.max(0, Math.min(100, preco));
+
+  /* ── EIXO 3 · ESTADO E PRONTIDÃO ── */
+  var estado = 78;
+  if(A.ocupacao === 'Está vazio') estado += 15;
+  if(A.ocupacao === 'Vivo lá') estado += 5;
+  if(A.ocupacao === 'Uso ocasional') estado += 5;
+  if(A.ocupacao === 'Está arrendado a inquilinos') estado -= 30;
+  if(A.imovel_ano === 'Antes de 1980') estado -= 15;
+  if(A.imovel_ano === '1980–2000') estado -= 5;
+  if(A.imovel_ano === 'Depois de 2015') estado += 8;
+  if(A.imovel_ano === 'Não sei ao certo') estado -= 5;
+  if(A.prazo_venda === 'Estou só a explorar a ideia') estado -= 10;
+  estado = Math.max(0, Math.min(100, estado));
+
+  /* ── TEMPO ESTIMADO ── */
+  var global = Math.round(doc*0.35 + preco*0.40 + estado*0.25);
+  var tempo, nota;
+  if(global >= 80){ tempo='4 a 8 semanas'; nota='A sua casa está pronta a ir a mercado.'; }
+  else if(global >= 65){ tempo='6 a 10 semanas'; nota='Está quase — faltam ajustes pontuais.'; }
+  else if(global >= 50){ tempo='2 a 4 meses'; nota='Há pontos a resolver antes de anunciar.'; }
+  else if(global >= 35){ tempo='4 a 6 meses'; nota='Vários travões vão atrasar a venda.'; }
+  else { tempo='Mais de 6 meses'; nota='Sem intervenção, a venda vai arrastar-se.'; }
+
+  /* ── TRAVÕES (por ordem de gravidade) ── */
+  var travoes = [];
+  function T(t, d){ travoes.push({t:t, d:d}); }
+
+  if(falta.indexOf('Certificado energético')>-1)
+    T('Falta o certificado energético','É obrigatório por lei para anunciar o imóvel. Sem ele, o anúncio não pode sequer ser publicado — e o pedido leva entre uma e três semanas.');
+  if(A.acordo_venda === 'Ainda não há acordo entre todos' || A.acordo_venda === 'Não sei / ainda não falámos')
+    T('Não há acordo entre todos os proprietários','A escritura precisa da assinatura de todos. Enquanto não houver acordo, qualquer proposta que receba fica em suspenso.');
+  if(A.encargos === 'Penhora ou processo judicial')
+    T('Existe uma penhora sobre o imóvel','Tem de ser levantada antes da escritura. É o travão que mais negócios trava à última hora, já com comprador à espera.');
+  if(A.ocupacao === 'Está arrendado a inquilinos')
+    T('O imóvel está arrendado','Reduz muito o número de compradores (a maioria quer para habitação própria) e pesa no preço. Convém definir a estratégia com o inquilino antes de anunciar.');
+  if(A.origem_do_valor === 'É o valor de que preciso para os meus planos')
+    T('O preço está ancorado na sua necessidade','O mercado não paga o que precisamos de receber — paga o que a casa vale. Um preço acima de mercado queima as primeiras semanas, que são as que trazem mais visitas.');
+  if(A.origem_do_valor === 'Sinceramente, não faço ideia')
+    T('Ainda não sabe quanto vale a casa','Anunciar acima de mercado gasta o interesse inicial e obriga a baixas sucessivas de preço, que os compradores leem como sinal de problema.');
+  if(A.tempo_no_mercado === '3 a 6 meses' || A.tempo_no_mercado === 'Mais de 6 meses')
+    T('Demasiado tempo no mercado','Um anúncio antigo transmite a ideia de que a casa tem algum problema. A esta altura, o mais eficaz é retirar, corrigir e relançar.');
+  if(A.ja_no_mercado === 'Sim, com agência em exclusivo')
+    T('Tem um contrato de exclusividade ativo','Enquanto o contrato durar, o imóvel só pode ser trabalhado por essa agência. Vale a pena confirmar a data de fim antes de avançar.');
+  if(A.encargos === 'Usufruto')
+    T('Há usufruto sobre o imóvel','O usufrutuário tem de consentir a venda. Sem esse consentimento por escrito, a escritura não avança.');
+  if(falta.length >= 3)
+    T('Faltam-lhe ' + falta.length + ' documentos','Reunir tudo leva semanas, sobretudo se houver pedidos a câmaras ou conservatórias. Comece já, em paralelo com a preparação da casa.');
+  if(A.prazo_venda === 'O mais rápido possível' && A.flexibilidade_preco === 'Nenhuma, é este valor')
+    T('Quer vender depressa sem ceder no preço','Rapidez e preço máximo raramente andam juntos. Vai ter de escolher qual dos dois é mais importante para si.');
+
+  /* ── PRÓXIMOS PASSOS (ordenados pelo caso) ── */
+  var passos = [];
+  if(falta.indexOf('Certificado energético')>-1)
+    passos.push({t:'Peça já o certificado energético', d:'É o único documento que bloqueia o anúncio. Um perito certificado emite-o normalmente em uma a três semanas.'});
+  if(A.acordo_venda === 'Ainda não há acordo entre todos' || A.acordo_venda === 'Não sei / ainda não falámos')
+    passos.push({t:'Feche o acordo entre proprietários', d:'Antes de mostrar a casa a alguém. Defina valor mínimo e quem decide — evita perder o comprador na fase final.'});
+  if(preco < 60)
+    passos.push({t:'Faça uma avaliação de mercado', d:'Um valor sustentado em vendas reais da zona, não em anúncios. É o que separa vender em semanas de vender em meses.'});
+  if(A.ocupacao === 'Está arrendado a inquilinos')
+    passos.push({t:'Defina a estratégia com o inquilino', d:'Vender com contrato em vigor, negociar a saída ou aguardar o fim do prazo. Cada caminho muda o preço e o tipo de comprador.'});
+  if(falta.length > 0 && falta.indexOf('Certificado energético') === -1)
+    passos.push({t:'Reúna os documentos em falta', d:'Caderneta nas Finanças, certidão permanente no registo predial, licença de utilização na câmara municipal.'});
+  if(A.tempo_no_mercado === '3 a 6 meses' || A.tempo_no_mercado === 'Mais de 6 meses')
+    passos.push({t:'Retire e relance o anúncio', d:'Fotografia nova, texto novo e preço corrigido. Relançar vale mais do que continuar a baixar o preço do mesmo anúncio.'});
+
+  /* preenchimento até 3 passos específicos, quando o caso é simples */
+  var extras = [
+    {t:'Confirme o valor com vendas reais da zona', d:'Os anúncios mostram o que se pede, não o que se paga. A diferença entre os dois é o que decide as primeiras semanas.'},
+    {t:'Prepare o anúncio antes de o publicar', d:'Fotografia com luz natural, texto escrito para o comprador-alvo e presença nos portais certos. As duas primeiras semanas trazem a maioria das visitas.'},
+    {t:'Tenha os documentos à mão na primeira visita', d:'Um comprador decidido quer avançar depressa. Papéis prontos evitam que o negócio arrefeça à espera de uma certidão.'}
+  ];
+  for(var k=0; k<extras.length && passos.length < 3; k++) passos.push(extras[k]);
+
+  passos = passos.slice(0,3);
+  passos.push({t:'Prepare a casa para as visitas', d:'Despersonalizar, arrumar, tratar dos pequenos arranjos e fotografar com luz natural. É o passo mais barato e o que mais rende.'});
+
+  return {
+    doc:doc, preco:preco, estado:estado, global:global,
+    tempo:tempo, nota:nota,
+    docsFalta:falta, travoes:travoes.slice(0,3), passos:passos
+  };
+}
+
+/* ═══════════════ ENVIO ═══════════════ */
+function normalizarTel(v){
+  var d = (v||'').replace(/\D/g,'');
+  if(!d) return '';
+  if(d.indexOf('00') === 0) d = d.slice(2);
+  if(d.length === 9) d = PREFIXO_PAIS + d;
+  return '+' + d;
+}
+
+function enviarWebhook(tel, first, last, D, eventId){
+  var payload = {
+    /* chaves padrão que o GoHighLevel mapeia sozinho */
+    name: (A.nome||'').trim(),
+    first_name: first,
+    last_name: last,
+    phone: tel,
+    email: (A.email||'').trim(),
+    /* metadados */
+    timestamp: new Date().toISOString(),
+    origem: NOME_ORIGEM,
+    pagina_url: window.location.href,
+    event_id: eventId,
+    consentimento_rgpd: temConsentimento() ? 'Sim' : 'Não',
+    /* respostas com rótulos legíveis */
+    imovel_tipo: A.imovel_tipo || '',
+    imovel_tipologia: A.imovel_tipologia || 'Não aplicável',
+    imovel_area: A.imovel_area ? A.imovel_area + ' m²' : '',
+    imovel_localizacao: A.imovel_localizacao || '',
+    imovel_ano: A.imovel_ano || '',
+    titularidade: A.titularidade || '',
+    acordo_venda: A.acordo_venda || 'Não aplicável',
+    documentos_que_tem: (A.documentos_que_tem||[]).join(' | ') || 'Nenhum',
+    documentos_em_falta: D.docsFalta.join(' | ') || 'Nenhum',
+    encargos: A.encargos || '',
+    valor_pretendido: A.valor_pretendido || '',
+    origem_do_valor: A.origem_do_valor || '',
+    capital_em_divida: A.capital_em_divida || '',
+    flexibilidade_preco: A.flexibilidade_preco || '',
+    motivo_venda: A.motivo_venda || '',
+    prazo_venda: A.prazo_venda || '',
+    ocupacao: A.ocupacao || '',
+    ja_no_mercado: A.ja_no_mercado || '',
+    tempo_no_mercado: A.tempo_no_mercado || 'Não aplicável',
+    quer_avaliacao: A.quer_avaliacao || '',
+    /* diagnóstico */
+    score_documentacao: D.doc,
+    score_preco: D.preco,
+    score_estado: D.estado,
+    score_global: D.global,
+    tempo_estimado: D.tempo,
+    travoes: D.travoes.map(function(t){ return t.t; }).join(' | ') || 'Nenhum travão crítico',
+    raw: JSON.parse(JSON.stringify(A))
+  };
+
+  if(!WEBHOOK_URL){
+    console.log('[MODO DEMO] payload que seria enviado ao GoHighLevel:', payload);
+    return;
+  }
+  fetch(WEBHOOK_URL, {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    keepalive:true,
+    body: JSON.stringify(payload)
+  }).catch(function(err){ console.error('Falha no envio do webhook:', err); });
+}
+
+function finalizar(){
+  if(aEnviar) return;
+  aEnviar = true;
+  btn.disabled = true;
+  btn.textContent = 'A preparar o seu diagnóstico...';
+
+  var D = diagnosticar();
+  var tel = normalizarTel(A.tel);
+  var partes = (A.nome||'').trim().split(/\s+/);
+  var first = partes[0] || '';
+  var last = partes.slice(1).join(' ') || '';
+  var eventId = 'lead-' + Date.now() + '-' + Math.random().toString(36).slice(2,8);
+
+  /* 1) guardar PRIMEIRO — a página de resultado lê daqui */
+  try {
+    sessionStorage.setItem(CHAVE_UNICA, JSON.stringify({A:A, D:D, eventId:eventId, ts:Date.now()}));
+  } catch(e){}
+
+  /* 2) Advanced Matching antes do evento */
+  if(PIXEL_ATIVO && typeof fbq === 'function'){
+    fbq('init', PIXEL_ID, { em:(A.email||'').trim(), ph:tel, fn:first, ln:last });
+    /* 3) Lead UMA vez. SEM value. SEM currency. */
+    fbq('track','Lead', { content_name:NOME_ORIGEM, content_category:MARCA }, { eventID:eventId });
+  }
+
+  /* 4) webhook (keepalive sobrevive ao redirect) */
+  enviarWebhook(tel, first, last, D, eventId);
+
+  /* 5) só agora o redirect */
+  var jaFoi = false;
+  var ir = function(){
+    if(jaFoi) return;
+    jaFoi = true;
+    window.location.href = 'resultado.html';
+  };
+  setTimeout(ir, 800);
+  setTimeout(ir, 2500);
+}
+</script>
 </body>
 </html>

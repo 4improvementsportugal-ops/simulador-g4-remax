@@ -1,810 +1,351 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-PT">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>O seu resultado | GRUPO G4 REMAX</title>
- 
-  <!-- ═══════════════════════════════════════════════════════════
-       VERIFICAÇÃO sessionStorage — redirect antes de renderizar
-       qualquer conteúdo se não houver dados (abre diretamente)
-       ═══════════════════════════════════════════════════════════ -->
-  <script>
-    var dadosSim = null;
-    (function() {
-      try {
-        var raw = sessionStorage.getItem('sim_g4remax');
-        if (!raw) { window.location.replace('index.html'); return; }
-        dadosSim = JSON.parse(raw);
-        if (!dadosSim || !dadosSim.A) { window.location.replace('index.html'); }
-      } catch(e) {
-        window.location.replace('index.html');
-      }
-    })();
-    // Nota: window.location.replace cancela qualquer beacon pendente —
-    // por isso o Lead NÃO é disparado aqui (já foi no index.html).
-    // O PageView abaixo só executa se dadosSim existir.
-  </script>
- 
-  <!-- ═══════════════════════════════════════════════════════════
-       META PIXEL — APENAS PageView (Lead já foi disparado no index)
-       O PageView deste URL /resultado alimenta a CONVERSÃO PERSONALIZADA POR URL
-       ═══════════════════════════════════════════════════════════ -->
-  <script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>O seu diagnóstico · Grupo G4 Remax</title>
+<meta name="robots" content="noindex,nofollow">
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   A ORDEM AQUI É SAGRADA
+   1º  ler sessionStorage e consentimento
+   2º  sem dados → replace para index.html, SEM carregar pixel
+   3º  só com dados E consentimento → pixel + PageView (uma vez)
+   4º  NUNCA disparar 'Lead' nesta página
+   ══════════════════════════════════════════════════════════════ */
+var CHAVE_UNICA = 'diag_g4remax';
+var CHAVE_CONSENTIMENTO = CHAVE_UNICA + '_cookies';
+var PIXEL_ID = '<COLOCAR_PIXEL_ID_AQUI>';
+var PIXEL_ATIVO = PIXEL_ID.indexOf('AQUI') === -1;
+
+var DADOS = null;
+try {
+  var bruto = sessionStorage.getItem(CHAVE_UNICA);
+  if(bruto){
+    var p = JSON.parse(bruto);
+    if(p && p.A && p.D) DADOS = p;
+  }
+} catch(e){ DADOS = null; }
+
+if(!DADOS){
+  window.location.replace('index.html');
+} else {
+  var consentiu = false;
+  try { consentiu = localStorage.getItem(CHAVE_CONSENTIMENTO) === 'aceite'; } catch(e){}
+  var jaContou = false;
+  try { jaContou = sessionStorage.getItem(CHAVE_UNICA + '_pv') === '1'; } catch(e){}
+
+  if(consentiu && PIXEL_ATIVO && !jaContou){
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
     n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-    document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1676725573619027');
-    fbq('track', 'PageView'); /* ← NÃO disparar Lead aqui — evita duplicação */
-  </script>
-  <noscript>
-    <img height="1" width="1" style="display:none"
-      src="https://www.facebook.com/tr?id=1676725573619027&ev=PageView&noscript=1"
-      alt="" aria-hidden="true">
-  </noscript>
-  <!-- FIM META PIXEL -->
- 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
- 
-  <style>
-    /* ── RESET & TOKENS ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-    :root {
-      --primary:      #004e9c;
-      --primary-dark: #003d7a;
-      --primary-light:#e8f0fa;
-      --accent:       #9a9c9e;
-      --bg:           #ffffff;
-      --surface:      #f4f7fb;
-      --text-dark:    #202020;
-      --text-mid:     #4a4a4a;
-      --text-light:   #6b6b6b;
-      --border:       #dde3ec;
-      --green:        #1b6b3a;
-      --green-bg:     #e6f4ec;
-      --amber:        #b45309;
-      --amber-bg:     #fef3c7;
-      --radius:       14px;
-      --radius-sm:    9px;
-    }
- 
-    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
-    body  { font-family: 'Inter', sans-serif; background: var(--surface); color: var(--text-dark); min-height: 100vh; }
- 
-    /* ── UTILIDADES ── */
-    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
- 
-    /* ══════════════════════════════════════════
-       HEADER
-    ══════════════════════════════════════════ */
-    .r-header {
-      background: var(--primary);
-      padding: 0;
-    }
-    .r-header-inner {
-      max-width: 850px;
-      margin: 0 auto;
-      padding: 0.875rem 1.25rem;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .r-header-brand {
-      display: flex; align-items: center; gap: 0.5rem;
-    }
-    .r-header-mark {
-      width: 28px; height: 28px;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif;
-      font-size: 0.7rem; font-weight: 700; color: #fff;
-    }
-    .r-header-name {
-      font-size: 0.68rem; font-weight: 600;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: rgba(255,255,255,0.8);
-    }
-    .r-header-tag {
-      font-size: 0.68rem; font-weight: 600;
-      color: rgba(255,255,255,0.65);
-      letter-spacing: 0.06em;
-      white-space: nowrap;
-    }
- 
-    /* ══════════════════════════════════════════
-       HERO DO RESULTADO
-    ══════════════════════════════════════════ */
-    .r-hero {
-      background: linear-gradient(150deg, #002f5f 0%, #004e9c 60%, #1565c0 100%);
-      padding: 2.5rem 1.25rem 3.5rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .r-hero::before {
-      content: '';
-      position: absolute; inset: 0;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
-    .r-hero::after {
-      content: '';
-      position: absolute;
-      bottom: -30px; left: -5%;
-      width: 110%; height: 60px;
-      background: var(--surface);
-      border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-    }
-    .r-hero-inner { position: relative; z-index: 2; }
- 
-    .r-greeting {
-      font-size: 0.88rem; font-weight: 500;
-      color: rgba(255,255,255,0.65);
-      margin-bottom: 0.4rem;
-      letter-spacing: 0.02em;
-    }
- 
-    .r-title {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.25;
-      margin-bottom: 1.75rem;
-    }
- 
-    /* Score display */
-    .score-box {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 16px;
-      padding: 1.2rem 2rem 1.4rem;
-      backdrop-filter: blur(6px);
-      margin-bottom: 1.4rem;
-    }
- 
-    .score-label {
-      font-size: 0.7rem; font-weight: 700;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 0.5rem;
-    }
- 
-    .score-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 3.6rem; font-weight: 700;
-      color: #fff; line-height: 1;
-    }
-    .score-denom {
-      font-size: 1.2rem; font-weight: 400;
-      color: rgba(255,255,255,0.5);
-      margin-left: 0.2rem;
-    }
- 
-    /* Badge */
-    .score-badge {
-      display: inline-block;
-      font-size: 0.72rem; font-weight: 800;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      padding: 0.3rem 0.85rem;
-      border-radius: 2rem;
-      margin-top: 0.65rem;
-    }
-    .badge-excelente { background: var(--green-bg); color: var(--green); }
-    .badge-bom       { background: var(--primary-light); color: var(--primary); }
-    .badge-moderado  { background: var(--amber-bg); color: var(--amber); }
- 
-    /* Barra de score */
-    .score-bar-wrap {
-      width: min(340px, 90vw);
-      height: 8px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 4px;
-      margin: 1.25rem auto 0;
-      overflow: hidden;
-    }
-    .score-bar {
-      height: 100%;
-      border-radius: 4px;
-      width: 0%;
-      transition: none; /* gerido por JS requestAnimationFrame */
-    }
-    .bar-excelente { background: linear-gradient(90deg, #4caf50, #81c784); }
-    .bar-bom       { background: linear-gradient(90deg, #1565c0, #42a5f5); }
-    .bar-moderado  { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
- 
-    /* ══════════════════════════════════════════
-       CORPO
-    ══════════════════════════════════════════ */
-    .r-body {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2.25rem 1.25rem 4rem;
-    }
- 
-    .section-title {
-      font-size: 0.66rem; font-weight: 800;
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 1rem;
-      opacity: 0.75;
-    }
- 
-    /* ── CARDS PRAZO / MOTIVO ── */
-    .cards-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin-bottom: 1.75rem;
-    }
-    @media (max-width: 380px) {
-      .cards-row { grid-template-columns: 1fr; }
-    }
- 
-    .info-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.1rem 1rem;
-      box-shadow: 0 1px 6px rgba(0,78,156,0.06);
-    }
-    .info-card-label {
-      font-size: 0.68rem; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.35rem;
-    }
-    .info-card-value {
-      font-size: 0.95rem; font-weight: 600;
-      color: var(--text-dark); line-height: 1.3;
-    }
- 
-    /* ── INTERPRETAÇÃO DO SCORE ── */
-    .interp-block {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--primary);
-      border-radius: var(--radius);
-      padding: 1.1rem 1.15rem;
-      margin-bottom: 1.75rem;
-      box-shadow: 0 1px 6px rgba(0,78,156,0.06);
-    }
-    .interp-text {
-      font-size: 0.93rem;
-      color: var(--text-mid);
-      line-height: 1.7;
-    }
- 
-    /* ── CITAÇÃO DE REFORÇO ── */
-    .quote-block {
-      background: var(--primary);
-      border-radius: var(--radius);
-      padding: 1.5rem 1.35rem;
-      margin-bottom: 1.75rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .quote-block::before {
-      content: '\201C';
-      position: absolute;
-      top: -0.5rem; left: 0.75rem;
-      font-family: 'Playfair Display', serif;
-      font-size: 6rem; font-weight: 700;
-      color: rgba(255,255,255,0.1);
-      line-height: 1;
-      pointer-events: none;
-      user-select: none;
-    }
-    .quote-text {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.05rem;
-      font-style: italic;
-      color: rgba(255,255,255,0.95);
-      line-height: 1.65;
-      position: relative;
-    }
-    .quote-author {
-      font-size: 0.72rem; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
-      margin-top: 0.85rem;
-      position: relative;
-    }
- 
-    /* ── DIVIDER ── */
-    .divider {
-      border: none;
-      border-top: 1px solid var(--border);
-      margin: 1.75rem 0;
-    }
- 
-    /* ── TIMELINE ── */
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      margin-bottom: 0.5rem;
-    }
-    .tl-item {
-      display: flex;
-      gap: 1rem;
-      padding: 0 0 1.5rem 0;
-      position: relative;
-    }
-    .tl-item:not(:last-child) .tl-line { display: block; }
-    .tl-left { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
-    .tl-dot {
-      width: 36px; height: 36px;
-      background: var(--primary-light);
-      border: 2px solid var(--primary);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 800;
-      color: var(--primary);
-      letter-spacing: 0.02em;
-      flex-shrink: 0;
-    }
-    .tl-line {
-      display: none;
-      flex: 1;
-      width: 2px;
-      background: var(--border);
-      margin-top: 4px;
-    }
-    .tl-content { padding-top: 0.45rem; }
-    .tl-title {
-      font-size: 0.93rem; font-weight: 700;
-      color: var(--text-dark); margin-bottom: 0.2rem;
-    }
-    .tl-desc {
-      font-size: 0.83rem; color: var(--text-light);
-      line-height: 1.6;
-    }
- 
-    /* ── AVISOS ── */
-    .avisos {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-    }
-    .aviso {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem 1.1rem;
-      display: flex;
-      gap: 0.9rem;
-      align-items: flex-start;
-      box-shadow: 0 1px 4px rgba(0,78,156,0.05);
-    }
-    .aviso-num {
-      flex-shrink: 0;
-      width: 28px; height: 28px;
-      background: var(--primary);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 800;
-      color: #fff; margin-top: 1px;
-    }
-    .aviso-content {}
-    .aviso-title {
-      font-size: 0.88rem; font-weight: 700;
-      color: var(--text-dark); margin-bottom: 0.25rem;
-    }
-    .aviso-text {
-      font-size: 0.82rem; color: var(--text-light);
-      line-height: 1.6;
-    }
- 
-    /* ── CTA SECTION ── */
-    .cta-section {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1.5rem 1.25rem;
-      text-align: center;
-      box-shadow: 0 2px 12px rgba(0,78,156,0.08);
-    }
-    .cta-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.25rem; font-weight: 700;
-      color: var(--text-dark); margin-bottom: 0.4rem;
-    }
-    .cta-subtitle {
-      font-size: 0.86rem; color: var(--text-light);
-      margin-bottom: 1.4rem; line-height: 1.6;
-    }
- 
-    .btn-wa {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.55rem;
-      width: 100%;
-      padding: 1rem;
-      background: #25d366;
-      color: #fff;
-      border: none;
-      border-radius: 3rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 1rem; font-weight: 700;
-      cursor: pointer;
-      text-decoration: none;
-      letter-spacing: 0.01em;
-      transition: background 0.15s, transform 0.1s;
-      margin-bottom: 0.75rem;
-    }
-    .btn-wa:hover  { background: #1db954; }
-    .btn-wa:active { transform: scale(0.98); }
- 
-    .cta-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.6rem;
-    }
- 
-    .btn-call {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.45rem;
-      padding: 0.85rem 0.75rem;
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 3rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.88rem; font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.15s;
-    }
-    .btn-call:hover { background: var(--primary-dark); }
- 
-    .btn-ig {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.45rem;
-      padding: 0.85rem 0.75rem;
-      background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);
-      color: #fff;
-      border: none;
-      border-radius: 3rem;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.88rem; font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity 0.15s;
-    }
-    .btn-ig:hover { opacity: 0.88; }
- 
-    /* ── FOOTER ── */
-    .r-footer {
-      text-align: center;
-      padding: 1.5rem 1.25rem 2.5rem;
-      font-size: 0.73rem;
-      color: var(--accent);
-      line-height: 1.7;
-    }
-    .r-footer a { color: var(--primary); text-decoration: none; }
- 
-    @media (prefers-reduced-motion: reduce) {
-      .score-bar { transition: none; }
-    }
-  </style>
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}
+    (window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', PIXEL_ID);
+    fbq('track','PageView');
+    try { sessionStorage.setItem(CHAVE_UNICA + '_pv','1'); } catch(e){}
+  }
+}
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --azul:#004e9b;
+  --azul-escuro:#003a73;
+  --vermelho:#df0d11;
+  --azul-medio:#6f92ba;
+  --fundo:#F7F8FA;
+  --branco:#ffffff;
+  --texto:#101720;
+  --texto-2:#5b6673;
+  --linha:#e3e7ec;
+  --raio:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--fundo);color:var(--texto);line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+button,a{font:inherit}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px;border-radius:4px}
+.wrap{max-width:680px;margin:0 auto;padding:0 18px}
+
+/* ── CABEÇALHO / VEREDICTO ── */
+.topo{
+  background:var(--azul);color:#fff;text-align:center;
+  padding:44px 22px 46px;
+}
+.avatar{
+  width:60px;height:60px;border-radius:50%;margin:0 auto 20px;
+  border:2.5px solid rgba(255,255,255,.9);overflow:hidden;
+}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.eyebrow{font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;opacity:.82;margin-bottom:14px}
+.veredicto{
+  font-family:'Instrument Serif',Georgia,serif;font-weight:400;
+  font-size:clamp(40px,11vw,66px);line-height:1.02;letter-spacing:-.03em;
+  margin-bottom:12px;text-wrap:balance;
+}
+.veredicto-nota{font-size:15.5px;opacity:.92;max-width:420px;margin:0 auto}
+.aviso{
+  font-size:12px;opacity:.7;margin-top:22px;padding-top:16px;
+  border-top:1px solid rgba(255,255,255,.22);max-width:420px;margin-left:auto;margin-right:auto;
+}
+
+/* ── SECÇÕES ── */
+section.bloco{padding:40px 0 4px}
+h2{
+  font-family:'Instrument Serif',Georgia,serif;font-weight:400;
+  font-size:clamp(24px,5.6vw,32px);line-height:1.16;letter-spacing:-.022em;margin-bottom:6px;
+}
+.legenda{font-size:14px;color:var(--texto-2);margin-bottom:22px}
+.cartao{
+  background:var(--branco);border:1px solid var(--linha);border-radius:18px;
+  padding:24px 22px;box-shadow:0 10px 30px rgba(16,23,32,.05);
+}
+
+/* ── EIXOS ── */
+.eixo{padding:18px 0;border-bottom:1px solid var(--linha)}
+.eixo:first-child{padding-top:0}
+.eixo:last-child{border-bottom:0;padding-bottom:0}
+.eixo-topo{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:9px}
+.eixo-nome{font-weight:600;font-size:15.5px}
+.eixo-val{font-family:'Instrument Serif',Georgia,serif;font-size:26px;line-height:1}
+.trilho{height:9px;background:#eef1f5;border-radius:9px;overflow:hidden}
+.trilho i{display:block;height:100%;width:0;border-radius:9px;transition:width 1.1s cubic-bezier(.3,.8,.3,1)}
+.eixo-desc{font-size:13px;color:var(--texto-2);margin-top:9px}
+.n-bom{background:var(--azul)}
+.n-medio{background:var(--azul-medio)}
+.n-mau{background:var(--vermelho)}
+.t-bom{color:var(--azul)}
+.t-medio{color:var(--azul-medio)}
+.t-mau{color:var(--vermelho)}
+
+/* ── CHECKLIST ── */
+.doc{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--linha);align-items:flex-start}
+.doc:last-child{border-bottom:0;padding-bottom:0}
+.doc:first-child{padding-top:0}
+.marca{
+  width:24px;height:24px;min-width:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;margin-top:1px;
+}
+.marca.sim{background:var(--azul)}
+.marca.nao{background:var(--vermelho)}
+.doc-nome{font-weight:600;font-size:15px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.doc-onde{font-size:13px;color:var(--texto-2);margin-top:3px}
+.tag-bloqueia{
+  background:rgba(223,13,17,.1);color:var(--vermelho);
+  font-size:10.5px;font-weight:700;letter-spacing:.06em;
+  padding:3px 8px;border-radius:5px;text-transform:uppercase;
+}
+
+/* ── TRAVÕES ── */
+.travao{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--linha)}
+.travao:last-child{border-bottom:0;padding-bottom:0}
+.travao:first-child{padding-top:0}
+.num{
+  font-family:'Instrument Serif',Georgia,serif;font-size:30px;line-height:.9;
+  color:var(--vermelho);min-width:26px;
+}
+.travao h3{font-size:15.5px;font-weight:600;margin-bottom:5px}
+.travao p{font-size:13.8px;color:var(--texto-2)}
+.sem-travoes{
+  background:rgba(0,78,155,.06);border:1px solid rgba(0,78,155,.2);
+  border-radius:14px;padding:20px;font-size:15px;font-weight:500;color:var(--azul-escuro);
+}
+
+/* ── PRÓXIMOS PASSOS ── */
+.passo-item{display:flex;gap:16px;padding:18px 0;border-bottom:1px solid var(--linha)}
+.passo-item:last-child{border-bottom:0;padding-bottom:0}
+.passo-item:first-child{padding-top:0}
+.passo-num{
+  width:28px;height:28px;min-width:28px;border-radius:50%;
+  background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;margin-top:1px;
+}
+.passo-item h3{font-size:15.5px;font-weight:600;margin-bottom:5px}
+.passo-item p{font-size:13.8px;color:var(--texto-2)}
+
+/* ── CTA ── */
+.cta-bloco{background:var(--azul);color:#fff;margin-top:46px;padding:46px 22px 50px;text-align:center}
+.cta-bloco h2{color:#fff;margin-bottom:12px}
+.cta-bloco p{font-size:15px;opacity:.92;max-width:440px;margin:0 auto 28px}
+.btns{max-width:420px;margin:0 auto;display:flex;flex-direction:column;gap:11px}
+.b{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:17px 24px;border-radius:var(--raio);font-weight:600;font-size:16px;
+  text-decoration:none;transition:transform .16s, opacity .16s;
+}
+.b:hover{transform:translateY(-2px)}
+.b-wa{background:#fff;color:var(--azul)}
+.b-tel{background:transparent;color:#fff;border:1.6px solid rgba(255,255,255,.55)}
+.b-ig{color:#fff;opacity:.8;font-size:13.5px;text-decoration:underline;margin-top:8px;display:inline-block}
+.rodape{text-align:center;font-size:12.5px;color:var(--texto-2);padding:30px 22px 44px;background:var(--fundo)}
+.rodape strong{display:block;color:var(--texto);font-weight:600;margin-bottom:6px;font-size:13px}
+.voltar{display:inline-block;margin-top:14px;font-size:12.5px;color:var(--texto-2)}
+
+@media (prefers-reduced-motion:reduce){
+  .trilho i{transition:none}
+}
+</style>
 </head>
 <body>
- 
-  <!-- HEADER -->
-  <header class="r-header">
-    <div class="r-header-inner">
-      <div class="r-header-brand">
-        <div class="r-header-mark" aria-hidden="true">G4</div>
-        <span class="r-header-name">Grupo G4 Remax</span>
-      </div>
-      <span class="r-header-tag">Resultado</span>
-    </div>
-  </header>
- 
-  <!-- HERO DO RESULTADO -->
-  <section class="r-hero" aria-label="Resultado do simulador">
-    <div class="r-hero-inner">
-      <p class="r-greeting" id="r-greeting">O seu resultado personalizado</p>
-      <h1 class="r-title">Calculámos a viabilidade<br>da sua troca de casa.</h1>
- 
-      <div class="score-box" aria-label="Pontuação de viabilidade">
-        <p class="score-label">Índice de viabilidade</p>
-        <div>
-          <span class="score-value" id="scoreValue">–</span><span class="score-denom">&nbsp;/ 10</span>
-        </div>
-        <span class="score-badge" id="scoreBadge">A calcular…</span>
-      </div>
- 
-      <div class="score-bar-wrap" role="progressbar" aria-label="Barra de viabilidade" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10">
-        <div class="score-bar" id="scoreBar"></div>
-      </div>
-    </div>
+
+<header class="topo">
+  <div class="avatar"><img src="data:image/png;base64,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" alt="Grupo G4 Remax" width="60" height="60"></div>
+  <div class="eyebrow" id="eyebrow">O seu diagnóstico</div>
+  <div class="veredicto" id="veredicto">—</div>
+  <p class="veredicto-nota" id="veredictoNota"></p>
+  <p class="aviso">Estimativa indicativa, construída a partir das suas respostas. Não substitui uma avaliação presencial.</p>
+</header>
+
+<div class="wrap">
+
+  <section class="bloco">
+    <h2>Onde está a sua casa hoje</h2>
+    <p class="legenda">Três eixos independentes. É a combinação dos três que define o tempo até vender.</p>
+    <div class="cartao" id="eixos"></div>
   </section>
- 
-  <!-- CORPO -->
-  <main class="r-body">
- 
-    <!-- Interpretação + Cards -->
-    <section aria-labelledby="sec-interp">
-      <p class="section-title" id="sec-interp">A sua situação</p>
- 
-      <div class="interp-block">
-        <p class="interp-text" id="r-interp">A analisar…</p>
-      </div>
- 
-      <div class="cards-row">
-        <div class="info-card">
-          <p class="info-card-label">Prazo indicado</p>
-          <p class="info-card-value" id="cardPrazo">–</p>
-        </div>
-        <div class="info-card">
-          <p class="info-card-label">Motivo principal</p>
-          <p class="info-card-value" id="cardMotivo">–</p>
-        </div>
-      </div>
-    </section>
- 
-    <!-- Citação de reforço -->
-    <div class="quote-block" role="blockquote">
-      <p class="quote-text" id="r-quote">–</p>
-      <p class="quote-author">Equipa GRUPO G4 REMAX</p>
-    </div>
- 
-    <hr class="divider">
- 
-    <!-- Timeline -->
-    <section aria-labelledby="sec-timeline">
-      <p class="section-title" id="sec-timeline">O processo de troca de casa</p>
-      <div class="timeline" role="list">
- 
-        <div class="tl-item" role="listitem">
-          <div class="tl-left">
-            <div class="tl-dot" aria-hidden="true">01</div>
-            <div class="tl-line"></div>
-          </div>
-          <div class="tl-content">
-            <p class="tl-title">Avaliação do imóvel atual</p>
-            <p class="tl-desc">Determinar o valor real de mercado do seu imóvel para definir a estratégia de preço e o timing ideal de venda.</p>
-          </div>
-        </div>
- 
-        <div class="tl-item" role="listitem">
-          <div class="tl-left">
-            <div class="tl-dot" aria-hidden="true">02</div>
-            <div class="tl-line"></div>
-          </div>
-          <div class="tl-content">
-            <p class="tl-title">Definição da estratégia</p>
-            <p class="tl-desc">Vender primeiro vs. comprar primeiro — cada opção tem vantagens distintas consoante o seu prazo, perfil financeiro e exposição ao risco.</p>
-          </div>
-        </div>
- 
-        <div class="tl-item" role="listitem">
-          <div class="tl-left">
-            <div class="tl-dot" aria-hidden="true">03</div>
-          </div>
-          <div class="tl-content">
-            <p class="tl-title">Escritura e mudança</p>
-            <p class="tl-desc">Coordenação das duas escrituras para uma transição fluída e sem periodos de sobreposição ou lacunas entre imóveis.</p>
-          </div>
-        </div>
- 
-      </div>
-    </section>
- 
-    <hr class="divider">
- 
-    <!-- Avisos / O que deve considerar -->
-    <section aria-labelledby="sec-avisos">
-      <p class="section-title" id="sec-avisos">O que deve considerar antes de avançar</p>
-      <div class="avisos" role="list">
- 
-        <div class="aviso" role="listitem">
-          <div class="aviso-num" aria-hidden="true">1</div>
-          <div class="aviso-content">
-            <p class="aviso-title">Conheça o valor real do seu imóvel</p>
-            <p class="aviso-text">Muitos proprietários subvalorizam ou sobrevalorizam o seu imóvel. Uma avaliação rigorosa por um profissional é o ponto de partida para qualquer negociação — e pode fazer a diferença de dezenas de milhares de euros.</p>
-          </div>
-        </div>
- 
-        <div class="aviso" role="listitem">
-          <div class="aviso-num" aria-hidden="true">2</div>
-          <div class="aviso-content">
-            <p class="aviso-title">Calcule todos os encargos</p>
-            <p class="aviso-text">IMT, Imposto do Selo, emolumentos notariais, registos e comissões imobiliárias podem representar 5 a 8% do valor da transação. Saiba exatamente quanto vai gastar antes de fechar qualquer acordo.</p>
-          </div>
-        </div>
- 
-        <div class="aviso" role="listitem" id="aviso-credito">
-          <div class="aviso-num" aria-hidden="true">3</div>
-          <div class="aviso-content">
-            <p class="aviso-title" id="aviso-credito-title">Crédito habitação</p>
-            <p class="aviso-text" id="aviso-credito-text">–</p>
-          </div>
-        </div>
- 
-      </div>
-    </section>
- 
-    <hr class="divider">
- 
-    <!-- CTA -->
-    <section class="cta-section" aria-labelledby="cta-heading">
-      <h2 class="cta-title" id="cta-heading">O próximo passo é conversar</h2>
-      <p class="cta-subtitle">A nossa equipa analisa a sua situação específica e apresenta-lhe uma estratégia personalizada — sem compromisso.</p>
- 
-      <a
-        class="btn-wa"
-        href="https://wa.me/351914016372?text=Ol%C3%A1%2C%20fiz%20o%20simulador%20e%20queria%20falar%20sobre%20a%20minha%20situa%C3%A7%C3%A3o"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Falar com G4 REMAX no WhatsApp">
-        <!-- WhatsApp icon -->
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-        Falar no WhatsApp
-      </a>
- 
-      <div class="cta-row">
-        <a
-          class="btn-call"
-          href="tel:+351914016372"
-          aria-label="Ligar agora para G4 REMAX">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
-          </svg>
-          Ligar agora
-        </a>
-        <a
-          class="btn-ig"
-          href="https://www.instagram.com/grupog4_remax/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Instagram do Grupo G4 REMAX">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-          </svg>
-          Instagram
-        </a>
-      </div>
-    </section>
- 
-  </main>
- 
-  <!-- FOOTER -->
-  <footer class="r-footer">
-    <p>GRUPO G4 REMAX · <a href="tel:+351914016372">+351 914 016 372</a></p>
-    <p style="margin-top:0.35rem;">Os seus dados são tratados com confidencialidade ao abrigo do RGPD.</p>
-  </footer>
- 
-  <!-- ══════════════════════════════════════════
-       JAVASCRIPT — Preenche o resultado
-  ══════════════════════════════════════════ -->
-  <script>
-    // dadosSim foi lido no <head>. Se for null, já houve redirect — não continuar.
-    if (dadosSim && dadosSim.A) {
-      (function() {
-        var A     = dadosSim.A;
-        var score = typeof dadosSim.score === 'number' ? dadosSim.score : 5;
- 
-        // ── Saudação com o primeiro nome ──
-        var partes = (A.nome || '').trim().split(/\s+/);
-        var first  = partes[0] || '';
-        if (first) {
-          document.getElementById('r-greeting').textContent = 'Olá, ' + first + '! Aqui está o seu resultado.';
-        }
- 
-        // ── Score ──
-        var scoreEl = document.getElementById('scoreValue');
-        scoreEl.textContent = score.toFixed(1).replace('.', ',');
- 
-        // ── Badge ──
-        var badge = document.getElementById('scoreBadge');
-        var barEl = document.getElementById('scoreBar');
- 
-        if (score >= 8) {
-          badge.textContent = 'Excelente';
-          badge.className   = 'score-badge badge-excelente';
-          barEl.className   = 'score-bar bar-excelente';
-        } else if (score >= 6) {
-          badge.textContent = 'Bom';
-          badge.className   = 'score-badge badge-bom';
-          barEl.className   = 'score-bar bar-bom';
-        } else {
-          badge.textContent = 'Moderado';
-          badge.className   = 'score-badge badge-moderado';
-          barEl.className   = 'score-bar bar-moderado';
-        }
- 
-        // Atualiza aria
-        document.querySelector('.score-bar-wrap').setAttribute('aria-valuenow', score);
- 
-        // ── Animar barra de score ──
-        var targetPct = (score / 10) * 100;
-        var startTs   = null;
-        function animarBarra(ts) {
-          if (!startTs) startTs = ts;
-          var progresso = Math.min((ts - startTs) / 1100, 1);
-          var ease      = 1 - Math.pow(1 - progresso, 3); // cubic ease-out
-          barEl.style.width = (ease * targetPct).toFixed(2) + '%';
-          if (progresso < 1) requestAnimationFrame(animarBarra);
-        }
-        // Pequeno delay para garantir que o DOM já renderizou
-        setTimeout(function() { requestAnimationFrame(animarBarra); }, 150);
- 
-        // ── Cards ──
-        var lblPrazo = {
-          'O mais rápido possível': 'O mais rápido possível',
-          '<3 meses':  'Menos de 3 meses',
-          '3–6 meses': '3 a 6 meses',
-          '>6 meses':  'Mais de 6 meses'
-        };
-        var lblMotivo = {
-          'Família/espaço':          'Família / espaço',
-          'Mudança de zona':         'Mudança de zona',
-          'Upgrade qualidade de vida':'Upgrade de qualidade de vida',
-          'Razões financeiras':      'Razões financeiras',
-          'Outro':                   'Outro motivo'
-        };
-        document.getElementById('cardPrazo').textContent  = lblPrazo[A.prazo]   || A.prazo   || '–';
-        document.getElementById('cardMotivo').textContent = lblMotivo[A.motivo]  || A.motivo  || '–';
- 
-        // ── Interpretação do score ──
-        var interp;
-        if (score >= 8) {
-          interp = 'A sua situação financeira está bem posicionada para avançar. Com capitais próprios sólidos e uma trajetória de prazo realista, a troca de casa pode ser mais simples e menos arriscada do que imagina — desde que a estratégia seja bem definida desde o início.';
-        } else if (score >= 6) {
-          interp = 'A sua situação tem potencial real. Existem pontos de atenção que merecem ser analisados em detalhe, mas com o planeamento adequado e o apoio de especialistas, a troca de casa está ao alcance. A estratégia certa faz toda a diferença.';
-        } else {
-          interp = 'Existem alguns condicionantes a considerar antes de avançar — mas isso não significa que seja impossível. Significa que precisa de uma estratégia personalizada que minimize o risco e maximize as suas hipóteses de concretizar a troca em boas condições.';
-        }
-        document.getElementById('r-interp').textContent = interp;
- 
-        // ── Citação de reforço ──
-        var quote;
-        if (score >= 8) {
-          quote = 'Com a preparação certa, a troca de casa não é uma transação — é uma oportunidade. A sua pontuação indica que as condições estão reunidas para avançar com confiança.';
-        } else if (score >= 6) {
-          quote = 'A maioria das trocas de casa bem-sucedidas não acontecem por acaso. Acontecem porque alguém decidiu planear antes de agir — e a sua situação está a um passo disso.';
-        } else {
-          quote = 'Cada situação é única, e o que parece um obstáculo pode ser uma vantagem negocial quando olhado pela perspetiva certa. O primeiro passo é perceber com clareza onde está e para onde pode ir.';
-        }
-        document.getElementById('r-quote').textContent = quote;
- 
-        // ── Aviso 3 — Crédito habitação (adapta-se ao perfil) ──
-        var avisoTit, avisoTxt;
-        if (A.tem_credito === 'Sim') {
-          avisoTit = 'Crédito habitação ativo — atenção à estratégia';
-          avisoTxt = 'Com crédito habitação em curso, existem duas abordagens principais: a portabilidade do crédito para o novo imóvel (quando os termos são favoráveis) ou a liquidação do crédito com a venda e nova contratação. Em muitos casos, vender antes de comprar reduz o risco de duplo encargo. Consulte um intermediário de crédito para analisar as suas condições atuais.';
-        } else {
-          avisoTit = 'Imóvel livre de hipoteca — uma vantagem estratégica';
-          avisoTxt = 'Não ter crédito habitação ativo dá-lhe uma flexibilidade significativa: pode comprar antes de vender sem risco de duplo crédito, tem mais poder negocial com os vendedores e acesso a condições de financiamento mais competitivas para o novo imóvel.';
-        }
-        document.getElementById('aviso-credito-title').textContent = avisoTit;
-        document.getElementById('aviso-credito-text').textContent  = avisoTxt;
- 
-      })();
-    }
-  </script>
- 
+
+  <section class="bloco">
+    <h2>Documentos</h2>
+    <p class="legenda" id="legDocs"></p>
+    <div class="cartao" id="checklist"></div>
+  </section>
+
+  <section class="bloco">
+    <h2>O que está a travar a sua venda</h2>
+    <p class="legenda">Identificado a partir das respostas que deu, por ordem de gravidade.</p>
+    <div id="travoes"></div>
+  </section>
+
+  <section class="bloco">
+    <h2>O que fazer a seguir</h2>
+    <p class="legenda">Por esta ordem — foi ordenado para o seu caso concreto.</p>
+    <div class="cartao" id="passos"></div>
+  </section>
+
+</div>
+
+<section class="cta-bloco">
+  <h2 id="ctaTitulo">Quer saber quanto vale MESMO a sua casa?</h2>
+  <p id="ctaTexto">Uma avaliação presencial gratuita, sem compromisso, com valores de vendas reais na sua zona.</p>
+  <div class="btns">
+    <a class="b b-wa" id="btnWhats" href="#" target="_blank" rel="noopener">Falar por WhatsApp</a>
+    <a class="b b-tel" href="tel:+351914016372">Ligar agora · +351 914 016 372</a>
+    <a class="b-ig" href="https://www.instagram.com/grupog4_remax/" target="_blank" rel="noopener">Ver o nosso Instagram</a>
+  </div>
+</section>
+
+<footer class="rodape">
+  <strong>Grupo G4 Remax</strong>
+  Os seus dados são tratados com confidencialidade ao abrigo do RGPD.
+  <br><a class="voltar" href="index.html">Fazer novo diagnóstico</a>
+</footer>
+
+<script>
+(function(){
+  if(!DADOS) return;
+  var A = DADOS.A, D = DADOS.D;
+  var primeiro = ((A.nome||'').trim().split(/\s+/)[0]) || '';
+
+  /* ── Cabeçalho ── */
+  document.getElementById('eyebrow').textContent = primeiro ? 'O seu diagnóstico · ' + primeiro : 'O seu diagnóstico';
+  document.getElementById('veredicto').textContent = D.tempo;
+  document.getElementById('veredictoNota').textContent = D.nota;
+  document.title = 'O seu diagnóstico · Grupo G4 Remax';
+
+  function escala(v){ return v >= 70 ? 'bom' : (v >= 45 ? 'medio' : 'mau'); }
+
+  /* ── Eixos ── */
+  var EIXOS = [
+    {nome:'Documentação', valor:D.doc,    desc:'Mede se tem em mãos o que é preciso para anunciar e escriturar sem parar a meio.'},
+    {nome:'Preço vs. mercado', valor:D.preco, desc:'Mede o quão sustentado está o valor que pede — e não o valor em si.'},
+    {nome:'Estado e prontidão', valor:D.estado, desc:'Mede se a casa pode ser visitada e entregue sem obstáculos.'}
+  ];
+  var html = '';
+  EIXOS.forEach(function(e, i){
+    var c = escala(e.valor);
+    html += '<div class="eixo">'
+      + '<div class="eixo-topo"><span class="eixo-nome">' + e.nome + '</span>'
+      + '<span class="eixo-val t-' + c + '">' + e.valor + '%</span></div>'
+      + '<div class="trilho"><i class="n-' + c + '" data-w="' + e.valor + '"></i></div>'
+      + '<p class="eixo-desc">' + e.desc + '</p></div>';
+  });
+  document.getElementById('eixos').innerHTML = html;
+  setTimeout(function(){
+    document.querySelectorAll('.trilho i').forEach(function(b){ b.style.width = b.dataset.w + '%'; });
+  }, 180);
+
+  /* ── Checklist de documentos ── */
+  var ONDE = {
+    'Caderneta predial':'Pede-se no Portal das Finanças, em poucos minutos.',
+    'Certidão permanente do registo':'Pede-se online no Predial Online ou numa Conservatória.',
+    'Licença de utilização':'Pede-se na câmara municipal do concelho do imóvel.',
+    'Certificado energético':'Emitido por um perito certificado pela ADENE. Leva 1 a 3 semanas.'
+  };
+  var DOCS = ['Caderneta predial','Certidão permanente do registo','Licença de utilização','Certificado energético'];
+  var falta = D.docsFalta || [];
+  document.getElementById('legDocs').textContent = falta.length
+    ? (falta.length === 1 ? 'Falta-lhe 1 documento.' : 'Faltam-lhe ' + falta.length + ' documentos.')
+    : 'Tem tudo o que é preciso.';
+
+  var hd = '';
+  DOCS.forEach(function(d){
+    var tem = falta.indexOf(d) === -1;
+    var bloqueia = (!tem && d === 'Certificado energético');
+    hd += '<div class="doc">'
+      + '<span class="marca ' + (tem ? 'sim' : 'nao') + '" aria-hidden="true">' + (tem ? '✓' : '✕') + '</span>'
+      + '<div><div class="doc-nome">' + d
+      + (bloqueia ? '<span class="tag-bloqueia">Bloqueia o anúncio</span>' : '')
+      + '</div><div class="doc-onde">' + ONDE[d] + '</div></div></div>';
+  });
+  document.getElementById('checklist').innerHTML = hd;
+
+  /* ── Travões ── */
+  var ht = '';
+  if(!D.travoes || !D.travoes.length){
+    ht = '<div class="sem-travoes">Não identificámos travões críticos. O caminho está livre — agora é executar bem.</div>';
+  } else {
+    ht = '<div class="cartao">';
+    D.travoes.forEach(function(t, i){
+      ht += '<div class="travao"><span class="num" aria-hidden="true">' + (i+1) + '</span>'
+         + '<div><h3>' + t.t + '</h3><p>' + t.d + '</p></div></div>';
+    });
+    ht += '</div>';
+  }
+  document.getElementById('travoes').innerHTML = ht;
+
+  /* ── Próximos passos ── */
+  var hp = '';
+  (D.passos||[]).forEach(function(p, i){
+    hp += '<div class="passo-item"><span class="passo-num" aria-hidden="true">' + (i+1) + '</span>'
+       + '<div><h3>' + p.t + '</h3><p>' + p.d + '</p></div></div>';
+  });
+  document.getElementById('passos').innerHTML = hp;
+
+  /* ── CTA com contexto real ── */
+  var tipo = A.imovel_tipo || 'imóvel';
+  var tipologia = (A.imovel_tipologia && A.imovel_tipo !== 'Terreno') ? ' ' + A.imovel_tipologia : '';
+  var local = A.imovel_localizacao ? ' em ' + A.imovel_localizacao : '';
+  var msg = 'Olá, fiz o simulador do Grupo G4 Remax. '
+          + 'O diagnóstico deu ' + D.tempo + ' para vender o meu ' + tipo.toLowerCase() + tipologia + local + '. '
+          + 'Queria falar sobre a minha situação.';
+  document.getElementById('btnWhats').href =
+    'https://api.whatsapp.com/send/?phone=351914016372&text=' + encodeURIComponent(msg) + '&type=phone_number&app_absent=0';
+
+  if(A.quer_avaliacao === 'Sim, quero marcar'){
+    document.getElementById('ctaTitulo').textContent = 'Já pedimos o contacto — vamos falar, ' + (primeiro || 'consigo') + '.';
+    document.getElementById('ctaTexto').textContent = 'Como pediu a avaliação gratuita, entramos em contacto nas próximas 48 horas. Se preferir adiantar, fale connosco já por WhatsApp.';
+  }
+})();
+</script>
 </body>
 </html>
-
-
