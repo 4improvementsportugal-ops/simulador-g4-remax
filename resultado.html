@@ -346,8 +346,8 @@ a{text-decoration:none;color:inherit}
   /* eixos */
   var EIXOS = [
     {nome:'Documentação', valor:D.doc, desc:'Mede se tem em mãos o que é preciso para anunciar e escriturar sem parar a meio.'},
-    {nome:'Preço face ao mercado', valor:D.preco, desc:'Mede o quão sustentado está o valor que pede, e não o valor em si.'},
-    {nome:'Estado e prontidão', valor:D.estado, desc:'Mede se a casa pode ser visitada e entregue sem obstáculos.'}
+    {nome:'Posição no mercado', valor:D.mercado, desc:'Mede se parte de uma folha limpa ou se o anúncio já gastou o interesse dos compradores.'},
+    {nome:'Prontidão para vender', valor:D.prontidao, desc:'Cruza o estado da casa com a decisão e o prazo de quem vende.'}
   ];
   var html = '';
   EIXOS.forEach(function(e){
@@ -419,10 +419,10 @@ a{text-decoration:none;color:inherit}
   document.getElementById('btnWhats').href = link;
   document.getElementById('btnWhatsFlutua').href = link;
 
-  if(A.quer_avaliacao === 'Sim, quero marcar'){
-    document.getElementById('ctaTitulo').textContent = 'Vamos falar, ' + (primeiro || 'consigo');
-    document.getElementById('ctaTexto').textContent = 'Como pediu a avaliação gratuita, entramos em contacto nas próximas 48 horas. Se preferir adiantar, fale connosco já por WhatsApp.';
-    document.getElementById('flutuaTexto').innerHTML = 'Avaliação pedida<small>Contacto nas próximas 48 horas</small>';
+  if(A.urgencia === 'O mais rápido possível'){
+    document.getElementById('ctaTitulo').textContent = 'Quer vender depressa. Vamos falar hoje, ' + (primeiro || 'consigo');
+    document.getElementById('ctaTexto').textContent = 'Com este prazo, cada semana conta. Entramos em contacto nas próximas 48 horas com uma avaliação gratuita. Se preferir adiantar, fale connosco já por WhatsApp.';
+    document.getElementById('flutuaTexto').innerHTML = 'Falar hoje com um consultor<small>Contacto nas próximas 48 horas</small>';
   }
 
   /* barra flutuante depois da primeira dobra */
